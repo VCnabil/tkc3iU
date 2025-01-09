@@ -27,7 +27,7 @@ void Scrn00SysOptEnter(void)
 
 void Scrn00SysOptCreate(void)
 {
-    vLcdBlankerEx(MAKERGB565(200, 200, 200), ALPHA_COLOR); // Set gray background
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
 
     // Setup buttons and their callbacks
     ButtonBarSetHeight(48);
@@ -36,11 +36,14 @@ void Scrn00SysOptCreate(void)
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_3, _Key3Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
+    // Draw a title
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options", WHITE, 100, LAYER_BACK);
 }
 
 void Scrn00SysOptUpdate(void)
 {
-    vLcdBlankerEx(MAKERGB565(100, 100, 100), ALPHA_COLOR); // Example: Darker gray background
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     
 }
 

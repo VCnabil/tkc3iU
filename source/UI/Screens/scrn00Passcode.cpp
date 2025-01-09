@@ -20,6 +20,7 @@ static void _Key5Release(void* userData);
 //------------------------------------------------------------------------------
 void Scrn00PasscodeEnter(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
 }
 
@@ -35,6 +36,7 @@ void Scrn00PasscodeCreate(void)
 
 void Scrn00PasscodeUpdate(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
 }
 

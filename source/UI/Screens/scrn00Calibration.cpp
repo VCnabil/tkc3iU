@@ -25,6 +25,7 @@ void Scrn00CalibrationEnter(void)
 
 void Scrn00CalibrationCreate(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_1, _Key1Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_2, _Key2Release, nullptr);
@@ -35,6 +36,7 @@ void Scrn00CalibrationCreate(void)
 
 void Scrn00CalibrationUpdate(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
 }
 

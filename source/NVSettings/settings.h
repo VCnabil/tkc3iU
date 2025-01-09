@@ -7,6 +7,8 @@
 #define __SETTINGS_H__
 
 #include "project.h"
+#include "VCInc.h" // <-- We include VCInc.h so we can use main_station, wing_station, etc.
+
 
 /// @defgroup settings Settings Functions
 /// Functions for handling the Settings.
@@ -43,11 +45,39 @@ BOOL SettingsIsBleepEnabled(void);
 void SettingsToggleBleep(void);
 
 /// Units related Functions
-/*
-void SettingsUnitSetPressureUnits(uint8_t NewUnits);
-void SettingsUnitsTogglePressure(void* userData = nullptr);
-uint8_t SettingsUnitGetPressureUnits(void);
-*/
+
+// Station Type
+uint8_t SettingsGetStationType(void);
+void SettingsSetStationType(uint8_t newStationType);
+void SettingsToggleStationType(void* userData = nullptr);
+// Data Mode
+uint8_t SettingsGetDataMode(void);
+void SettingsSetDataMode(uint8_t newDataMode);
+void SettingsToggleDataMode(void);
+// Nozzle Flip
+uint8_t SettingsGetNozzleMapFlip(void);
+void SettingsSetNozzleMapFlip(uint8_t newNozzleMapFlip);
+void SettingsToggleNozzleMapFlip(void);
+
+// Bucket Flip
+uint8_t SettingsGetBucketMapFlip(void);
+void SettingsSetBucketMapFlip(uint8_t newBucketMapFlip);
+void SettingsToggleBucketMapFlip(void);
+
+// Tab Flip
+uint8_t SettingsGetTabMapFlip(void);
+void SettingsSetTabMapFlip(uint8_t newTabMapFlip);
+void SettingsToggleTabMapFlip(void);
+
+// Indication Config
+uint8_t SettingsGetIndicationConfig(void);
+void SettingsSetIndicationConfig(uint8_t newConfig);
+void SettingsToggleIndicationConfig(void);
+
+// Comms Mode
+uint8_t SettingsGetCommsMode(void);
+void SettingsSetCommsMode(uint8_t newCommsMode);
+void SettingsToggleCommsMode(void);
  
 
 /// Load default settings and force a save

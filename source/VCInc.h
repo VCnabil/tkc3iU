@@ -6,8 +6,6 @@
 #ifndef __VCINC_H__
 #define __VCINC_H__
 
-#define MAX_FAULTS_DISP 5        //maximum number of faults displayed per column  
-#define MAX_FAULTS_DISP_SMALLFONT 8        //maximum number of faults displayed per column 
 #define MAX_PROPN_FAULTS_DISP     11 // maximum number of faults displayed per screen 
 #define MAX_SYSTEM_PARAMETERS 8  //defines number of system parameters in the system options screen
 #define rs232_mode   1           //indication data received via rs232 (fault data is always)
@@ -17,10 +15,31 @@
 #define wing_station 2
 #define normal 1                 //for nozzle mapping; 450 = steer right
 #define flipped 2                //for nozzle mapping; 450 = steer left
+#define comm_mode_4     4
+#define comm_mode_5     5
+//1 bucket, 1 nozzle (single jet)
+#define idc1_1buk1noz 1
+//2 buckets, 2 nozzles
+#define idc2_2buk2noz 2
+//2 buckets, 1 nozzle (stbd nozzle because of linked steering)
+#define idc3_2buk1noz 3
+//2 buckets, 2 nozzles, 2 trimtab/interceptors
+#define idc4_2buk2noz2tab 4
+//2 buckets, 1 nozzle (linked steering), 2 trimtab/interceptors
+#define idc5_2buk1noz2tab 5
+//2 buckets, 2 nozzles, graphics have graduations (YF Special)
+#define idc6_2buk2noz_grad 6
+
 #define NMEA_HEADER "$PVCC"      //NMEA header for serial xmission
+
+#endif // __VCINC_H__
+
+
+
+/*
+
 #define CR "\r"
 #define LF "\n"
-
 //fault decoding
 void Decode_SignalFault(void); //assigns feedback signal fault variables
 void Decode_NfuFault(void);  //assigns non-follow-up fault variables
@@ -73,4 +92,4 @@ extern char Intsteer[5];
 
 //Array for holding and processing password (to enter calibration screen)
 extern int Password_Array[6];
-#endif // __VCINC_H__
+*/

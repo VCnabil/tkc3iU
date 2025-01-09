@@ -25,16 +25,21 @@ void Scrn00CentralAlarmEnter(void)
 
 void Scrn00CentralAlarmCreate(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_1, _Key1Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_2, _Key2Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_3, _Key3Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
+    // Draw a title
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "Central Alarm ", WHITE, 100, LAYER_BACK);
 }
 
 void Scrn00CentralAlarmUpdate(void)
 {
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // to be implemented
 }
 

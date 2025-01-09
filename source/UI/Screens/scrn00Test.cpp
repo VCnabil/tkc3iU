@@ -27,7 +27,7 @@ void Scrn00TestEnter(void)
 
 void Scrn00TestCreate(void)
 {
-    vLcdBlankerEx(MAKERGB565(50, 50, 50), ALPHA_COLOR); // Example: Dark background
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
 
     // Setup buttons and their callbacks
     ButtonBarSetHeight(48);
@@ -36,11 +36,14 @@ void Scrn00TestCreate(void)
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_3, _Key3Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
+    // Draw a title
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "Test page ", WHITE, 100, LAYER_BACK);
 }
 
 void Scrn00TestUpdate(void)
 {
-    vLcdBlankerEx(MAKERGB565(25, 25, 25), ALPHA_COLOR); // Example: Black background
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
  
 }
 
