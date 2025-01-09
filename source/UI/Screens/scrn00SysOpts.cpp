@@ -323,7 +323,7 @@ void Scrn00SysOptExit(void)
 static void _Key1Release(void* userData)
 {
     // "Back to Start" button pressed
-    MMIScreenGoto(SCREENID_START);
+    MMIScreenGoto(SCREENID_PASSCODE);
 }
 
 static void _Key2Release(void* userData)

@@ -32,6 +32,11 @@
 
 #define NMEA_HEADER "$PVCC"      //NMEA header for serial xmission
 
+extern int Intsteer_Enable;
+//Enable_RS232_Transmission is set from reading the i15 from serial received line . if it is 1 , Enable_RS232_Transmission = 0; if it is 0, Enable_RS232_Transmission = 1 that s if we are the main statoin
+extern int Enable_RS232_Transmission;
+//Local_Enable_RS232_Transmission is set SysOpts screen .   
+extern int Local_Enable_RS232_Transmission ;
 
 typedef enum
 {

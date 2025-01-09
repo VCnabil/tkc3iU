@@ -335,7 +335,7 @@ void SettingsToggleIndicationConfig(void)
 // -----------------------
 // XMIT RS232
 // -----------------------
-
+int Local_Enable_RS232_Transmission = 0; // Definition with an initial value
 uint8_t SettingsGetXmitrs232OnOff(void)
 {
 	return m_settings.XMIT_RS232;
@@ -347,6 +347,7 @@ void SettingsSetXmitrs232OnOff(uint8_t newXmitrs232)
 	if (newXmitrs232 == 1 || newXmitrs232 == 0)
 	{
 		m_settings.XMIT_RS232 = newXmitrs232;
+        Local_Enable_RS232_Transmission = newXmitrs232; //vcinc.h
 		SettingsSave();
 	}
 }
@@ -365,6 +366,7 @@ void SettingsToggleXmitrs232OnOff(void)
 // INSTEER
 // -----------------------
 
+int Intsteer_Enable = 0; // Definition with an initial value
 uint8_t SettingsGetInSteerOnOff(void)
 {
 	return m_settings.INTSTEER;
@@ -376,6 +378,7 @@ void SettingsSetInSteerOnOff(uint8_t newInSteer)
 	if (newInSteer == 1 || newInSteer == 0)
 	{
 		m_settings.INTSTEER = newInSteer;
+        Intsteer_Enable = newInSteer; //vcinc.h
 		SettingsSave();
 	}
 }

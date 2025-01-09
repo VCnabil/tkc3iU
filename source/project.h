@@ -45,5 +45,6 @@
 #include "UI/Screens/scrn00Passcode.h"
 #include "UI/Screens/scrn00CentralAlarm.h"
 #include "UI/Screens/scrn00AlarmSummary.h"
+#include "UI/Screens/scrn00HideZero.h"  
 
 #endif // #ifndef __PROJECT_H__

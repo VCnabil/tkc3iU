@@ -22,15 +22,17 @@ void ScreensInit(void)
     MMIRegisterScreen(SCREENID_FAULTS, Scrn00FaultsEnter, Scrn00FaultsCreate, Scrn00FaultsUpdate, Scrn00FaultsExit);
     MMIRegisterScreen(SCREENID_ABOUT, Scrn00AboutEnter, Scrn00AboutCreate, Scrn00AboutUpdate, Scrn00AboutExit);
     MMIRegisterScreen(SCREENID_ZEROTHRUST, Scrn00ZerothrustEnter, Scrn00ZerothrustCreate, Scrn00ZerothrustUpdate, Scrn00ZerothrustExit);
+	MMIRegisterScreen(SCREENID_HIDEZERO, Scrn00HideZeroEnter, Scrn00HideZeroCreate, Scrn00HideZeroUpdate, Scrn00HideZeroExit);
+
     MMIRegisterScreen(SCREENID_CALIBRATION, Scrn00CalibrationEnter, Scrn00CalibrationCreate, Scrn00CalibrationUpdate, Scrn00CalibrationExit);
     MMIRegisterScreen(SCREENID_AUTOCAL, Scrn00AutocalEnter, Scrn00AutocalCreate, Scrn00AutocalUpdate, Scrn00AutocalExit);
     MMIRegisterScreen(SCREENID_PASSCODE, Scrn00PasscodeEnter, Scrn00PasscodeCreate, Scrn00PasscodeUpdate, Scrn00PasscodeExit);
     MMIRegisterScreen(SCREENID_CENTRALALARM, Scrn00CentralAlarmEnter, Scrn00CentralAlarmCreate, Scrn00CentralAlarmUpdate, Scrn00CentralAlarmExit);
     MMIRegisterScreen(SCREENID_ALARMSUMMARY, Scrn00AlarmSummaryEnter, Scrn00AlarmSummaryCreate, Scrn00AlarmSummaryUpdate, Scrn00AlarmSummaryExit);
-
+	
 //
 	// Initial screen.
-	MMIScreenGoto(SCREENID_START);
+	MMIScreenGoto(SCREENID_PASSCODE);
 
 #if defined(ENABLE_FPS_COUNTER)
 	// Enable the Frames Per Second counter on the screen

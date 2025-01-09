@@ -35,4 +35,6 @@ source/UI/Screens/scrn00Autocal.cpp
 source/UI/Screens/scrn00Passcode.cpp
 source/UI/Screens/scrn00CentralAlarm.cpp
 source/UI/Screens/scrn00AlarmSummary.cpp
+source/UI/Screens/scrn00HideZero.cpp
+
 )

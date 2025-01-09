@@ -7,6 +7,7 @@
 #define __SCRN00PASSCODE_H__
 
 #include "project.h"
+extern int passcodeScreen;
 
 //------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
