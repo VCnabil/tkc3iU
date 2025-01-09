@@ -9,35 +9,232 @@
 //#include <iostream>
 //#include <string>
 #include "VCInc.h"
+ 
 
 //------------------------------------------------------------------------------
-// LOCAL VARIABLES
-//------------------------------------------------------------------------------
+/*
+Define a structure to represent each system option for display purposes.
+This maps the option name to getter and toggler functions.
+*/
+typedef struct
+{
+    const char* name;                             // Display label
+    const char* (*getValueStr)(void);             // Function to get current value as string
+    void (*toggleFunc)(void);                     // Function to toggle the setting
+} SYSTEM_OPT_DISPLAY_T;
 
-// Which option are we currently highlighting to toggle?
-static int g_currentOptionIndex = 0;
-static bool is_use_Image = false;
+//------------------------------------------------------------------------------
+/*
+Function Prototypes for getting value strings.
+Implement these to return the current setting as a string.
+*/
+static const char* GetCommsModeStr(void);
+static const char* GetStationTypeStr(void);
+static const char* GetDataModeStr(void);
+static const char* GetNozzleMapFlipStr(void);
+static const char* GetBucketMapFlipStr(void);
+static const char* GetTabMapFlipStr(void);
 
 //------------------------------------------------------------------------------
-// LOCAL FUNCTION PROTOTYPES
+/*
+Function Prototypes for toggling settings.
+These should call the appropriate toggle functions from your settings system.
+*/
+static void ToggleCommsMode(void);
+static void ToggleStationType(void);
+static void ToggleDataMode(void);
+static void ToggleNozzleMapFlip(void);
+static void ToggleBucketMapFlip(void);
+static void ToggleTabMapFlip(void);
+
 //------------------------------------------------------------------------------
+/*
+Define the system options for display and interaction.
+Ensure the order matches the enumeration.
+*/
+static SYSTEM_OPT_DISPLAY_T m_SYSTEMOPTIONS_DISPLAY[SYSOPT_INDEX_MAX] =
+{
+    { "COMMS_MODE",      GetCommsModeStr,      ToggleCommsMode },
+    { "STATION_TYPE",    GetStationTypeStr,    ToggleStationType },
+    { "DATA_MODE",       GetDataModeStr,       ToggleDataMode },
+    { "NOZZLEMAP_FLIP",  GetNozzleMapFlipStr,  ToggleNozzleMapFlip },
+    { "BUCKETMAP_FLIP",  GetBucketMapFlipStr,  ToggleBucketMapFlip },
+    { "TABMAP_FLIP",     GetTabMapFlipStr,     ToggleTabMapFlip }
+};
+
+//------------------------------------------------------------------------------
+/*
+Track the currently selected option index.
+*/
+static int s_currentOptionIndex = 0; // Range: 0..SYSOPT_INDEX_MAX-1
+
+//------------------------------------------------------------------------------
+/*
+Function Prototypes for internal screen operations.
+*/
 static void _Key1Release(void* userData);
 static void _Key2Release(void* userData);
 static void _Key3Release(void* userData);
 static void _Key4Release(void* userData);
 static void _Key5Release(void* userData);
 
-static void _DrawScreen(void);
-static const char* _GetOptionName(int index);
-static const char* _GetOptionValueString(int index);
-static void _ToggleOptionValue(int index);
+static void _DrawStaticLabels(void);
+static void _DrawDynamicValues(void);
+static void _DrawHighlight(void);
 
 //------------------------------------------------------------------------------
-// PUBLIC FUNCTIONS
+/*
+Getter functions to retrieve current setting values as strings.
+Implement these based on your settings system.
+*/
+static const char* GetCommsModeStr(void)
+{
+    static char buffer[16];
+    uint8_t mode = SettingsGetCommsMode();
+
+    switch (mode)
+    {
+    case comm_mode_4:
+        return "comm_mode 4";
+    case comm_mode_5:
+        return "comm_mode 5";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", mode);
+        return buffer;
+    }
+}
+
+static const char* GetStationTypeStr(void)
+{
+    static char buffer[16];
+    uint8_t stType = SettingsGetStationType();
+
+    switch (stType)
+    {
+    case main_station:
+        return "StaType main";
+    case wing_station:
+        return "StaType wing";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", stType);
+        return buffer;
+    }
+}
+
+static const char* GetDataModeStr(void)
+{
+    static char buffer[16];
+    uint8_t dataMode = SettingsGetDataMode();
+
+    switch (dataMode)
+    {
+    case rs232_mode:
+        return "DatMode rs232";
+    case CANbus_mode:
+        return "DatMode CAN";
+    case CANbus_GPSI_mode:
+        return "DatMode GPSI";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", dataMode);
+        return buffer;
+    }
+}
+
+static const char* GetNozzleMapFlipStr(void)
+{
+    static char buffer[16];
+    uint8_t val = SettingsGetNozzleMapFlip();
+
+    switch (val)
+    {
+    case normal:
+        return "NNozMap normal";
+    case flipped:
+        return "NozMap flipped";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", val);
+        return buffer;
+    }
+}
+
+static const char* GetBucketMapFlipStr(void)
+{
+    static char buffer[16];
+    uint8_t val = SettingsGetBucketMapFlip();
+
+    switch (val)
+    {
+    case normal:
+        return "BktMap normal";
+    case flipped:
+        return "BktMap flipped";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", val);
+        return buffer;
+    }
+}
+
+static const char* GetTabMapFlipStr(void)
+{
+    static char buffer[16];
+    uint8_t val = SettingsGetTabMapFlip();
+
+    switch (val)
+    {
+    case normal:
+        return "IntMap normal";
+    case flipped:
+        return "IntMap flipped";
+    default:
+        snprintf(buffer, sizeof(buffer), "Unknown(%u)", val);
+        return buffer;
+    }
+}
+
 //------------------------------------------------------------------------------
+/*
+Toggle functions that call the corresponding settings toggle functions.
+*/
+static void ToggleCommsMode(void)
+{
+    SettingsToggleCommsMode();
+}
+
+static void ToggleStationType(void)
+{
+    SettingsToggleStationType(nullptr); // Pass nullptr as per your function signature
+}
+
+static void ToggleDataMode(void)
+{
+    SettingsToggleDataMode();
+}
+
+static void ToggleNozzleMapFlip(void)
+{
+    SettingsToggleNozzleMapFlip();
+}
+
+static void ToggleBucketMapFlip(void)
+{
+    SettingsToggleBucketMapFlip();
+}
+
+static void ToggleTabMapFlip(void)
+{
+    SettingsToggleTabMapFlip();
+}
+
+//------------------------------------------------------------------------------
+/*
+Public Functions (Called by Screen Framework)
+*/
 void Scrn00SysOptEnter(void)
 {
-    // Called once when we navigate to this screen
+    // Called once when navigating to this screen
+    // Ensure that the screen is updated with current settings
+    SettingsLoad();
+    Scrn00SysOptUpdate();
 }
 
 void Scrn00SysOptCreate(void)
@@ -45,253 +242,185 @@ void Scrn00SysOptCreate(void)
     // Color background
     vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
 
-    // Setup buttons (the "ButtonBar") and their callbacks
+    // Setup button images (ensure these are defined appropriately)
+    ButtonBarSetKeyImages(KEYINDEX_1, &view_meters, &view_meters); // Back to Start
+    ButtonBarSetKeyImages(KEYINDEX_2, &up, &up);                   // Next Option
+    ButtonBarSetKeyImages(KEYINDEX_3, &down, &down);               // Previous Option
+    ButtonBarSetKeyImages(KEYINDEX_4, &toggle, &toggle);           // Toggle Option
+    ButtonBarSetKeyImages(KEYINDEX_5, &blank, &blank);             // Exit to Start
+
+    // Setup buttons and their callbacks
     ButtonBarSetHeight(48);
-    
-    
-    if (is_use_Image == true) {
-       // ButtonBarSetKeyImages(KEYINDEX_1, &view_meters, &view_meters);
-        /*
-        
-        ButtonBarSetKeyImages(KEYINDEX_2, &up, &up);
-        ButtonBarSetKeyImages(KEYINDEX_3, &down, &down);
-        ButtonBarSetKeyImages(KEYINDEX_4, &toggle, &toggle);
-        ButtonBarSetKeyImages(KEYINDEX_5, &blank, &blank);*/
-    }
-    else {
+    ButtonBarSetBackgroundColour(MAKERGB565(121, 137, 121));
+    // Make buttons always visible
+    ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
 
-        // KEY 1 = "back to Start"
-        ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "back to", "Start");
-        // KEY 2 = "NEXT OPT"
-        ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "NEXT", "OPT");
-        // KEY 3 = "PREV OPT"
-        ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "PREV", "OPT");
-        // KEY 4 = "TOGG OPT"
-        ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 9, BLACK, "TOGG", "OPT");
-        // KEY 5 = "EXIT"
-        ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "EXIT", "");
-    }
-
-
+    // Register callbacks
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_1, _Key1Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_2, _Key2Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_3, _Key3Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
 
-    // Draw screen title
-    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 25, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
-    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options", BLACK, 100, LAYER_FRONT);
-
-    // We'll do the detailed lines in _DrawScreen()
-
-    ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
-    _DrawScreen();
+    // Draw static labels on LAYER_BACK
+    _DrawStaticLabels();
 }
 
 void Scrn00SysOptUpdate(void)
 {
-    // This is called periodically. Let's redraw everything
-    // in case something changes (optional).
-    _DrawScreen();
+    // Clear the FRONT layer with background color
+    fill_lcd_screen(MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+    // Draw dynamic values on LAYER_FRONT
+    _DrawDynamicValues();
+
+    // Draw highlight rectangle around the selected item
+    _DrawHighlight();
 }
 
 void Scrn00SysOptExit(void)
 {
     // Called once when leaving this screen
+    // Optionally perform cleanup if necessary
 }
 
 //------------------------------------------------------------------------------
-// LOCAL FUNCTIONS
-//------------------------------------------------------------------------------
+/*
+Local Functions - Button Callbacks
+*/
 static void _Key1Release(void* userData)
 {
-    // "back to Start"
+    // "Back to Start" button pressed
     MMIScreenGoto(SCREENID_START);
 }
 
 static void _Key2Release(void* userData)
 {
-    // NEXT => increment current index
-    g_currentOptionIndex++;
-    if (g_currentOptionIndex >= SYSOPT_INDEX_MAX)
-    {
-        g_currentOptionIndex = 0;
-    }
-    _DrawScreen();
+    // "Next Option" button pressed
+    s_currentOptionIndex++;
+    if (s_currentOptionIndex >= SYSOPT_INDEX_MAX)
+        s_currentOptionIndex = 0; // Wrap around to first option
+
+    // Update the screen
+    Scrn00SysOptUpdate();
 }
 
 static void _Key3Release(void* userData)
 {
-    // PREV => decrement current index
-    if (g_currentOptionIndex == 0)
-    {
-        g_currentOptionIndex = SYSOPT_INDEX_MAX - 1;
-    }
+    // "Previous Option" button pressed
+    if (s_currentOptionIndex == 0)
+        s_currentOptionIndex = SYSOPT_INDEX_MAX - 1; // Wrap around to last option
     else
-    {
-        g_currentOptionIndex--;
-    }
-    _DrawScreen();
+        s_currentOptionIndex--;
+
+    // Update the screen
+    Scrn00SysOptUpdate();
 }
 
 static void _Key4Release(void* userData)
 {
-    // TOGGLE the option
-    _ToggleOptionValue(g_currentOptionIndex);
-    _DrawScreen();
+    // "Toggle Option" button pressed
+    // Call the toggle function for the current option
+    if (s_currentOptionIndex >= 0 && s_currentOptionIndex < SYSOPT_INDEX_MAX)
+    {
+        m_SYSTEMOPTIONS_DISPLAY[s_currentOptionIndex].toggleFunc();
+    }
+
+    // Update the screen
+    Scrn00SysOptUpdate();
 }
 
 static void _Key5Release(void* userData)
 {
-    // "EXIT" => just go back to start
+    // "Exit to Start" button pressed
     MMIScreenGoto(SCREENID_START);
 }
 
 //------------------------------------------------------------------------------
-// _DrawScreen()
-//------------------------------------------------------------------------------
-static void _DrawScreen(void)
+/*
+Local Functions - Drawing Helpers
+*/
+// Draw static labels on LAYER_BACK
+static void _DrawStaticLabels(void)
 {
-    // Clear background
-    fill_lcd_screen(MAKERGB565(121, 137, 121), LAYER_BACK);
+    // Draw Title
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 25,
+        HORIZONTAL_ALIGNMENT_CENTRE,
+        VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options", BLACK, 100, LAYER_BACK);
 
-    // We'll draw 6 lines, each for a setting:
-    //  1) "COMMS_MODE: <value>"
-    //  2) "STATION_TYPE: <value>"
-    //  3) "DATA_MODE: <value>"
-    //  4) "NOZZLEMAP_FLIP: <value>"
-    //  5) "BUCKETMAP_FLIP: <value>"
-    //  6) "TABMAP_FLIP: <value>"
-    //
-    // We'll highlight whichever is g_currentOptionIndex
+    // Setup smaller font for labels
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 15,
+        HORIZONTAL_ALIGNMENT_LEFT,
+        VERTICAL_ALIGNMENT_TOP, 0);
 
-    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 9, HORIZONTAL_ALIGNMENT_LEFT, VERTICAL_ALIGNMENT_TOP, 0);
+    // Define starting positions for labels
+    const int leftX = 10;
+    const int rightX = 150;
+    const int startY = 60;
+    const int lineSpacing = 30;
 
-    const int startX = 10;       // left margin
-    const int startY = 60;       // top margin
-    const int lineH = 12;       // line spacing
+    // Left Column Labels (3 items)
+    SimpleTextDraw(leftX, startY, "DatMode = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(leftX, startY + lineSpacing, "232 Xmit = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(leftX, startY + 2 * lineSpacing, "NozMap = ", BLACK, 100, LAYER_BACK);
 
-    for (int i = 0; i < SYSOPT_INDEX_MAX; i++)
+    // Right Column Labels (3 items)
+    SimpleTextDraw(rightX, startY, "IntMap = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(rightX, startY + lineSpacing, "IntSteer = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(rightX, startY + 2 * lineSpacing, "StaType = ", BLACK, 100, LAYER_BACK);
+}
+
+static void _DrawDynamicValues(void)
+{
+    // Setup font for dynamic text
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 15,
+        HORIZONTAL_ALIGNMENT_LEFT,
+        VERTICAL_ALIGNMENT_TOP, 0);
+
+    // Define starting positions for dynamic text
+    const int leftDynamicX = 10;   // Fixed X position for left column dynamic text
+    const int rightDynamicX = 155;  // Fixed X position for right column dynamic text
+    const int startY = 60;
+    const int lineSpacing = 30;
+
+    // Left Column Dynamic Values (COMMS_MODE, STATION_TYPE, DATA_MODE)
+    for (int i = 0; i < 3; i++)
     {
-        char lineBuf[64];
-        // Compose: "[*] COMMS_MODE: <value>" or "    COMMS_MODE: <value>"
-        // If i == g_currentOptionIndex, we add an asterisk to highlight
-        const char* highlight = (i == g_currentOptionIndex) ? "[*] " : "    ";
-        const char* nameStr = _GetOptionName(i);
-        const char* valStr = _GetOptionValueString(i);
+        const char* displayText = m_SYSTEMOPTIONS_DISPLAY[i].getValueStr();
+        int yPos = startY + (i * lineSpacing);
+        SimpleTextDraw(leftDynamicX, yPos, displayText, BLACK, 100, LAYER_FRONT);
+    }
 
-        snprintf(lineBuf, sizeof(lineBuf), "%s%s: %s", highlight, nameStr, valStr);
-        SimpleTextDraw(startX, startY + i * lineH, lineBuf, BLACK, 100, LAYER_BACK);
+    // Right Column Dynamic Values (NOZZLEMAP_FLIP, BUCKETMAP_FLIP, TABMAP_FLIP)
+    for (int i = 3; i < SYSOPT_INDEX_MAX; i++)
+    {
+        const char* displayText = m_SYSTEMOPTIONS_DISPLAY[i].getValueStr();
+        int yPos = startY + ((i - 3) * lineSpacing); // Corrected from (i - 4) to (i - 3)
+        SimpleTextDraw(rightDynamicX, yPos, displayText, BLACK, 100, LAYER_FRONT);
     }
 }
 
-//------------------------------------------------------------------------------
-// Option Names
-//------------------------------------------------------------------------------
-static const char* _GetOptionName(int index)
+static void _DrawHighlight(void)
 {
-    switch (index)
-    {
-    case SYSOPT_INDEX_COMMS_MODE:      return "COMMS_MODE";
-    case SYSOPT_INDEX_STATION_TYPE:    return "STATION_TYPE";
-    case SYSOPT_INDEX_DATA_MODE:       return "DATA_MODE";
-    case SYSOPT_INDEX_NOZZLEMAP_FLIP:  return "NOZ_MAP_FLIP";
-    case SYSOPT_INDEX_BUCKETMAP_FLIP:  return "BKT_MAP_FLIP";
-    case SYSOPT_INDEX_TABMAP_FLIP:     return "TAB_MAP_FLIP";
-    default:                           return "???";
-    }
-}
+    // Define rectangle positions based on selected item
+    const int leftRectX1 = 5;
+    const int leftRectX2 = 145;
+    const int rightRectX1 = 145;
+    const int rightRectX2 = 315;
+    const int startY = 55;
+    const int rectHeight = 30;
 
-//------------------------------------------------------------------------------
-// Build a string for the current value of each setting
-//------------------------------------------------------------------------------
-static const char* _GetOptionValueString(int index)
-{
-    static char s_valueBuf[32]; // re-used for all calls, keep it simple
-
-    switch (index)
+    if (s_currentOptionIndex < 3)
     {
-    case SYSOPT_INDEX_COMMS_MODE:
-    {
-        uint8_t mode = SettingsGetCommsMode();
-        if (mode == comm_mode_4)  return "comm_mode_4";
-        if (mode == comm_mode_5)  return "comm_mode_5";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", mode);
-        return s_valueBuf;
+        // Left Column
+        int y = startY + (s_currentOptionIndex * rectHeight);
+        rectangleEx(leftRectX1, y, leftRectX2, y + 30, NORMAL, SOLID, BLACK, 100, LAYER_FRONT);
     }
-    case SYSOPT_INDEX_STATION_TYPE:
+    else
     {
-        uint8_t stType = SettingsGetStationType();
-        if (stType == main_station) return "main_station";
-        if (stType == wing_station) return "wing_station";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", stType);
-        return s_valueBuf;
-    }
-    case SYSOPT_INDEX_DATA_MODE:
-    {
-        uint8_t dataMode = SettingsGetDataMode();
-        if (dataMode == rs232_mode)      return "rs232_mode";
-        if (dataMode == CANbus_mode)     return "CANbus_mode";
-        if (dataMode == CANbus_GPSI_mode)return "CANbus_GPSI";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", dataMode);
-        return s_valueBuf;
-    }
-    case SYSOPT_INDEX_NOZZLEMAP_FLIP:
-    {
-        uint8_t val = SettingsGetNozzleMapFlip();
-        if (val == normal)  return "normal";
-        if (val == flipped) return "flipped";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", val);
-        return s_valueBuf;
-    }
-    case SYSOPT_INDEX_BUCKETMAP_FLIP:
-    {
-        uint8_t val = SettingsGetBucketMapFlip();
-        if (val == normal)  return "normal";
-        if (val == flipped) return "flipped";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", val);
-        return s_valueBuf;
-    }
-    case SYSOPT_INDEX_TABMAP_FLIP:
-    {
-        uint8_t val = SettingsGetTabMapFlip();
-        if (val == normal)  return "normal";
-        if (val == flipped) return "flipped";
-        snprintf(s_valueBuf, sizeof(s_valueBuf), "Unknown(%u)", val);
-        return s_valueBuf;
-    }
-    default:
-        return "???";
-    }
-}
-
-//------------------------------------------------------------------------------
-// Toggle logic for each setting
-//------------------------------------------------------------------------------
-static void _ToggleOptionValue(int index)
-{
-    switch (index)
-    {
-    case SYSOPT_INDEX_COMMS_MODE:
-        SettingsToggleCommsMode();
-        break;
-    case SYSOPT_INDEX_STATION_TYPE:
-        SettingsToggleStationType();
-        break;
-    case SYSOPT_INDEX_DATA_MODE:
-        SettingsToggleDataMode();
-        break;
-    case SYSOPT_INDEX_NOZZLEMAP_FLIP:
-        SettingsToggleNozzleMapFlip();
-        break;
-    case SYSOPT_INDEX_BUCKETMAP_FLIP:
-        SettingsToggleBucketMapFlip();
-        break;
-    case SYSOPT_INDEX_TABMAP_FLIP:
-        SettingsToggleTabMapFlip();
-        break;
-    default:
-        break;
+        // Right Column
+        int y = startY + ((s_currentOptionIndex - 3) * rectHeight);
+        rectangleEx(rightRectX1, y, rightRectX2, y + 30, NORMAL, SOLID, BLACK, 100, LAYER_FRONT);
     }
 }

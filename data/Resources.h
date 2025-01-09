@@ -4,6 +4,16 @@
 #if !defined(__RESOURCES_H__)
 #define __RESOURCES_H__
 
+// Bitmap File: bitmaps/Bar.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[298662];
+} bar_T;
+extern const bar_T bar;
+
 // Bitmap File: bitmaps/red_square.png
 typedef struct
 {
