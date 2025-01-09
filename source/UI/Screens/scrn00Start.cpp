@@ -89,5 +89,5 @@ static void _Key4Release(void* userData)
 static void _Key5Release(void* userData)
 {
     // Add actions for Key 5 release
-	MMIScreenGoto(SCREENID_SYSOPTS);
+	MMIScreenGoto(SCREENID_SYSOPTS01);
 }

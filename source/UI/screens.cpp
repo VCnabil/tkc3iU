@@ -17,6 +17,7 @@ void ScreensInit(void)
     // Register user screens 
     MMIRegisterScreen(SCREENID_START, Scrn00StartEnter, Scrn00StartCreate, Scrn00StartUpdate, Scrn00StartExit);
     MMIRegisterScreen(SCREENID_SYSOPTS, Scrn00SysOptUpdate, Scrn00SysOptCreate, Scrn00SysOptUpdate, Scrn00SysOptExit);
+	MMIRegisterScreen(SCREENID_SYSOPTS01, Scrn01SysOptUpdate, Scrn01SysOptCreate, Scrn01SysOptUpdate, Scrn01SysOptExit);
     MMIRegisterScreen(SCREENID_TEST, Scrn00TestEnter, Scrn00TestCreate, Scrn00TestUpdate, Scrn00TestExit);
     MMIRegisterScreen(SCREENID_FAULTS, Scrn00FaultsEnter, Scrn00FaultsCreate, Scrn00FaultsUpdate, Scrn00FaultsExit);
     MMIRegisterScreen(SCREENID_ABOUT, Scrn00AboutEnter, Scrn00AboutCreate, Scrn00AboutUpdate, Scrn00AboutExit);
@@ -27,6 +28,7 @@ void ScreensInit(void)
     MMIRegisterScreen(SCREENID_CENTRALALARM, Scrn00CentralAlarmEnter, Scrn00CentralAlarmCreate, Scrn00CentralAlarmUpdate, Scrn00CentralAlarmExit);
     MMIRegisterScreen(SCREENID_ALARMSUMMARY, Scrn00AlarmSummaryEnter, Scrn00AlarmSummaryCreate, Scrn00AlarmSummaryUpdate, Scrn00AlarmSummaryExit);
 
+//
 	// Initial screen.
 	MMIScreenGoto(SCREENID_START);
 

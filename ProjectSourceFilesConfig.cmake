@@ -25,6 +25,7 @@ source/main.cpp
 #screens
 source/UI/Screens/scrn00Start.cpp
 source/UI/Screens/scrn00SysOpts.cpp
+source/UI/Screens/scrn01SysOpts.cpp
 source/UI/screens/scrn00Test.cpp
 source/UI/Screens/screen00Faults.cpp
 source/UI/Screens/scrn00About.cpp

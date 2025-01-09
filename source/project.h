@@ -35,6 +35,7 @@
 //screens
 #include "UI/Screens/scrn00Start.h"
 #include "UI/Screens/scrn00SysOpts.h"
+#include "UI/Screens/scrn01SysOpts.h"
 #include "UI/Screens/scrn00Test.h"
 #include "UI/Screens/screen00Faults.h"
 #include "UI/Screens/scrn00About.h"

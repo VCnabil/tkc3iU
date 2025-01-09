@@ -167,7 +167,8 @@ void SettingsSetStationType(uint8_t newStationType)
     }
 }
 
-void SettingsToggleStationType(void)
+ 
+void SettingsToggleStationType(void* userData)
 {
     if (m_settings.STATION_TYPE == main_station)
     {

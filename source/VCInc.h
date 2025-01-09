@@ -32,6 +32,19 @@
 
 #define NMEA_HEADER "$PVCC"      //NMEA header for serial xmission
 
+
+typedef enum
+{
+    SYSOPT_INDEX_COMMS_MODE = 0,
+    SYSOPT_INDEX_STATION_TYPE,
+    SYSOPT_INDEX_DATA_MODE,
+    SYSOPT_INDEX_NOZZLEMAP_FLIP,
+    SYSOPT_INDEX_BUCKETMAP_FLIP,
+    SYSOPT_INDEX_TABMAP_FLIP,
+    SYSOPT_INDEX_MAX
+} SYSOPT_INDEX_E;
+
+
 #endif // __VCINC_H__
 
 
