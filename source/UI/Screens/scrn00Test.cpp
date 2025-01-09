@@ -1,0 +1,78 @@
+//------------------------------------------------------------------------------
+//  TITLE :          scrn00Test.cpp
+//  DESCRIPTION :    Implementation of scrn00Test screen
+//  AUTHOR :         Nabil Lamriben 1/08/2025
+//------------------------------------------------------------------------------
+#include "scrn00Test.h"
+#include "UI/screens.h"
+#include <iostream>
+#include <string>
+
+//------------------------------------------------------------------------------
+// LOCAL FUNCTION PROTOTYPES
+//------------------------------------------------------------------------------
+static void _Key1Release(void* userData);
+static void _Key2Release(void* userData);
+static void _Key3Release(void* userData);
+static void _Key4Release(void* userData);
+static void _Key5Release(void* userData);
+
+//------------------------------------------------------------------------------
+// PUBLIC FUNCTIONS
+//------------------------------------------------------------------------------
+void Scrn00TestEnter(void)
+{
+ 
+}
+
+void Scrn00TestCreate(void)
+{
+    vLcdBlankerEx(MAKERGB565(50, 50, 50), ALPHA_COLOR); // Example: Dark background
+
+    // Setup buttons and their callbacks
+    ButtonBarSetHeight(48);
+    ButtonBarRegisterKeyReleaseCallback(KEYINDEX_1, _Key1Release, nullptr);
+    ButtonBarRegisterKeyReleaseCallback(KEYINDEX_2, _Key2Release, nullptr);
+    ButtonBarRegisterKeyReleaseCallback(KEYINDEX_3, _Key3Release, nullptr);
+    ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
+    ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
+}
+
+void Scrn00TestUpdate(void)
+{
+    vLcdBlankerEx(MAKERGB565(25, 25, 25), ALPHA_COLOR); // Example: Black background
+ 
+}
+
+void Scrn00TestExit(void)
+{
+    
+}
+
+//------------------------------------------------------------------------------
+// LOCAL FUNCTIONS
+//------------------------------------------------------------------------------
+static void _Key1Release(void* userData)
+{
+ 
+}
+
+static void _Key2Release(void* userData)
+{
+ 
+}
+
+static void _Key3Release(void* userData)
+{
+   
+}
+
+static void _Key4Release(void* userData)
+{
+ 
+}
+
+static void _Key5Release(void* userData)
+{
+  
+}
