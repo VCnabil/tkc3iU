@@ -46,38 +46,51 @@ void SettingsToggleBleep(void);
 
 /// Units related Functions
 
-// Station Type
+// Station Type 1
 uint8_t SettingsGetStationType(void);
 void SettingsSetStationType(uint8_t newStationType);
 void SettingsToggleStationType(void* userData = nullptr);
-// Data Mode
+// Data Mode 2
 uint8_t SettingsGetDataMode(void);
 void SettingsSetDataMode(uint8_t newDataMode);
 void SettingsToggleDataMode(void);
-// Nozzle Flip
+// Nozzle Flip 3
 uint8_t SettingsGetNozzleMapFlip(void);
 void SettingsSetNozzleMapFlip(uint8_t newNozzleMapFlip);
 void SettingsToggleNozzleMapFlip(void);
 
-// Bucket Flip
+// Bucket Flip 4
 uint8_t SettingsGetBucketMapFlip(void);
 void SettingsSetBucketMapFlip(uint8_t newBucketMapFlip);
 void SettingsToggleBucketMapFlip(void);
 
-// Tab Flip
+// Tab Flip 5
 uint8_t SettingsGetTabMapFlip(void);
 void SettingsSetTabMapFlip(uint8_t newTabMapFlip);
 void SettingsToggleTabMapFlip(void);
 
-// Indication Config
-uint8_t SettingsGetIndicationConfig(void);
-void SettingsSetIndicationConfig(uint8_t newConfig);
-void SettingsToggleIndicationConfig(void);
 
-// Comms Mode
+
+// Comms Mode 6
 uint8_t SettingsGetCommsMode(void);
 void SettingsSetCommsMode(uint8_t newCommsMode);
 void SettingsToggleCommsMode(void);
+
+// Xmit rs232 7
+uint8_t SettingsGetXmitrs232OnOff(void);
+void SettingsSetXmitrs232OnOff(uint8_t newCommsMode);
+void SettingsToggleXmitrs232OnOff(void);
+
+// INSTEER on off 8
+uint8_t SettingsGetInSteerOnOff(void);
+void SettingsSetInSteerOnOff(uint8_t newCommsMode);
+void SettingsToggleInSteerOnOff(void);
+
+
+// Indication Config 6
+uint8_t SettingsGetIndicationConfig(void);
+void SettingsSetIndicationConfig(uint8_t newConfig);
+void SettingsToggleIndicationConfig(void);
  
 
 /// Load default settings and force a save

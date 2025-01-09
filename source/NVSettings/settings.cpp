@@ -43,6 +43,9 @@ typedef struct
 	uint8_t  INDICATION_CONFIG;
 	// Comms mode: comm_mode_4 or comm_mode_5
 	uint8_t  COMMS_MODE;
+
+    uint8_t XMIT_RS232; // 1 = transmit RS232, 0 = don't transmit RS232
+    uint8_t INTSTEER; // 1 =ON, 0 = OFF
 	 
 
 } SETTINGS_T;
@@ -329,6 +332,64 @@ void SettingsToggleIndicationConfig(void)
     m_settings.INDICATION_CONFIG = next;
     SettingsSave();
 }
+// -----------------------
+// XMIT RS232
+// -----------------------
+
+uint8_t SettingsGetXmitrs232OnOff(void)
+{
+	return m_settings.XMIT_RS232;
+}
+
+void SettingsSetXmitrs232OnOff(uint8_t newXmitrs232)
+{
+    // Allowed: 1 (1), 0 (0)
+	if (newXmitrs232 == 1 || newXmitrs232 == 0)
+	{
+		m_settings.XMIT_RS232 = newXmitrs232;
+		SettingsSave();
+	}
+}
+
+void SettingsToggleXmitrs232OnOff(void)
+{
+	if (m_settings.XMIT_RS232 == 1)
+		m_settings.XMIT_RS232 = 0;
+	else
+		m_settings.XMIT_RS232 = 1;
+
+	SettingsSave();
+}
+
+// -----------------------
+// INSTEER
+// -----------------------
+
+uint8_t SettingsGetInSteerOnOff(void)
+{
+	return m_settings.INTSTEER;
+}
+
+void SettingsSetInSteerOnOff(uint8_t newInSteer)
+{
+	// Allowed: 1 (1), 0 (0)
+	if (newInSteer == 1 || newInSteer == 0)
+	{
+		m_settings.INTSTEER = newInSteer;
+		SettingsSave();
+	}
+}
+
+void SettingsToggleInSteerOnOff(void)
+{
+	if (m_settings.INTSTEER == 1)
+		m_settings.INTSTEER = 0;
+	else
+		m_settings.INTSTEER = 1;
+
+	SettingsSave();
+}
+
 
 // -----------------------
 // Comms Mode
@@ -357,6 +418,8 @@ void SettingsToggleCommsMode(void)
 
     SettingsSave();
 }
+
+
 
 #pragma endregion
 
@@ -401,5 +464,11 @@ static void _SettingsLoadDefaults(void)
     // Comms Mode
     m_settings.COMMS_MODE = comm_mode_4;
     // or  = comm_mode_5;
+
+    // Xmit RS232
+    m_settings.XMIT_RS232 = 1; // 1 = transmit RS232, 0 = don't transmit RS232
+
+    // INSTEER
+    m_settings.INTSTEER = 1; // 1 = ON, 0 = OFF
   
 }

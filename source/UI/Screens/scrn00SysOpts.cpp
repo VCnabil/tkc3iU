@@ -4,18 +4,10 @@
 //  AUTHOR :         Nabil Lamriben 1/08/2025
 //------------------------------------------------------------------------------
 #include "project.h"
-//#include "scrn00SysOpts.h"
 #include "UI/screens.h"
-//#include <iostream>
-//#include <string>
 #include "VCInc.h"
  
-
-//------------------------------------------------------------------------------
-/*
-Define a structure to represent each system option for display purposes.
-This maps the option name to getter and toggler functions.
-*/
+ 
 typedef struct
 {
     const char* name;                             // Display label
@@ -24,34 +16,33 @@ typedef struct
 } SYSTEM_OPT_DISPLAY_T;
 
 //------------------------------------------------------------------------------
-/*
-Function Prototypes for getting value strings.
-Implement these to return the current setting as a string.
-*/
+//Function Prototypes for getting value strings.Implement these to return the current setting as a string.
+ 
 static const char* GetCommsModeStr(void);
 static const char* GetStationTypeStr(void);
 static const char* GetDataModeStr(void);
 static const char* GetNozzleMapFlipStr(void);
 static const char* GetBucketMapFlipStr(void);
 static const char* GetTabMapFlipStr(void);
+static const char* GetXmit232Str(void);
+static const char* GetIntSteerStr(void);
+
 
 //------------------------------------------------------------------------------
-/*
-Function Prototypes for toggling settings.
-These should call the appropriate toggle functions from your settings system.
-*/
+// Function Prototypes for toggling settings.These should call the appropriate toggle functions from your settings system.
+
 static void ToggleCommsMode(void);
 static void ToggleStationType(void);
 static void ToggleDataMode(void);
 static void ToggleNozzleMapFlip(void);
 static void ToggleBucketMapFlip(void);
 static void ToggleTabMapFlip(void);
+static void ToggleXmit232(void);
+static void ToggleIntSteer(void);
 
 //------------------------------------------------------------------------------
-/*
-Define the system options for display and interaction.
-Ensure the order matches the enumeration.
-*/
+//Define the system options for display and interaction. Ensure the order matches the enumeration.
+
 static SYSTEM_OPT_DISPLAY_T m_SYSTEMOPTIONS_DISPLAY[SYSOPT_INDEX_MAX] =
 {
     { "COMMS_MODE",      GetCommsModeStr,      ToggleCommsMode },
@@ -59,19 +50,21 @@ static SYSTEM_OPT_DISPLAY_T m_SYSTEMOPTIONS_DISPLAY[SYSOPT_INDEX_MAX] =
     { "DATA_MODE",       GetDataModeStr,       ToggleDataMode },
     { "NOZZLEMAP_FLIP",  GetNozzleMapFlipStr,  ToggleNozzleMapFlip },
     { "BUCKETMAP_FLIP",  GetBucketMapFlipStr,  ToggleBucketMapFlip },
-    { "TABMAP_FLIP",     GetTabMapFlipStr,     ToggleTabMapFlip }
+    { "TABMAP_FLIP",     GetTabMapFlipStr,     ToggleTabMapFlip },
+    {"XMIT 232", GetXmit232Str, ToggleXmit232},
+	{"IntSteer", GetIntSteerStr, ToggleIntSteer},
+ 
 };
+int HalfSysOps = SYSOPT_INDEX_MAX / 2;
 
 //------------------------------------------------------------------------------
-/*
-Track the currently selected option index.
-*/
+///Track the currently selected option index.
+
 static int s_currentOptionIndex = 0; // Range: 0..SYSOPT_INDEX_MAX-1
 
 //------------------------------------------------------------------------------
-/*
-Function Prototypes for internal screen operations.
-*/
+//Function Prototypes for internal screen operations.
+
 static void _Key1Release(void* userData);
 static void _Key2Release(void* userData);
 static void _Key3Release(void* userData);
@@ -83,10 +76,8 @@ static void _DrawDynamicValues(void);
 static void _DrawHighlight(void);
 
 //------------------------------------------------------------------------------
-/*
-Getter functions to retrieve current setting values as strings.
-Implement these based on your settings system.
-*/
+//Getter functions to retrieve current setting values as strings.Implement these based on your settings system.
+
 static const char* GetCommsModeStr(void)
 {
     static char buffer[16];
@@ -191,10 +182,43 @@ static const char* GetTabMapFlipStr(void)
     }
 }
 
+static const char* GetXmit232Str(void)
+{
+	static char buffer[16];
+	uint8_t val = SettingsGetXmitrs232OnOff();
+
+	switch (val)
+	{
+	case 1:
+		return "Xmit232 ON";
+	case 0:
+		return "Xmit232 OFF";
+	default:
+		snprintf(buffer, sizeof(buffer), "Unknown(%u)", val);
+		return buffer;
+	}
+}
+
+static const char* GetIntSteerStr(void)
+{
+	static char buffer[16];
+	uint8_t val = SettingsGetInSteerOnOff();
+
+	switch (val)
+	{
+	case 1:
+		return "IntSteer ON";
+	case 0:
+		return "IntSteer OFF";
+	default:
+		snprintf(buffer, sizeof(buffer), "Unknown(%u)", val);
+		return buffer;
+	}
+}
+
 //------------------------------------------------------------------------------
-/*
-Toggle functions that call the corresponding settings toggle functions.
-*/
+//Toggle functions that call the corresponding settings toggle functions.
+
 static void ToggleCommsMode(void)
 {
     SettingsToggleCommsMode();
@@ -225,10 +249,19 @@ static void ToggleTabMapFlip(void)
     SettingsToggleTabMapFlip();
 }
 
+static void ToggleXmit232(void)
+{
+	SettingsToggleXmitrs232OnOff();
+}
+
+static void ToggleIntSteer(void)
+{
+	SettingsToggleInSteerOnOff();
+}
+
 //------------------------------------------------------------------------------
-/*
-Public Functions (Called by Screen Framework)
-*/
+//Public Functions (Called by Screen Framework)
+
 void Scrn00SysOptEnter(void)
 {
     // Called once when navigating to this screen
@@ -244,8 +277,8 @@ void Scrn00SysOptCreate(void)
 
     // Setup button images (ensure these are defined appropriately)
     ButtonBarSetKeyImages(KEYINDEX_1, &view_meters, &view_meters); // Back to Start
-    ButtonBarSetKeyImages(KEYINDEX_2, &up, &up);                   // Next Option
-    ButtonBarSetKeyImages(KEYINDEX_3, &down, &down);               // Previous Option
+    ButtonBarSetKeyImages(KEYINDEX_2, &down, &down);               // Previous Option
+    ButtonBarSetKeyImages(KEYINDEX_3, &up, &up);                   // Next Option
     ButtonBarSetKeyImages(KEYINDEX_4, &toggle, &toggle);           // Toggle Option
     ButtonBarSetKeyImages(KEYINDEX_5, &blank, &blank);             // Exit to Start
 
@@ -285,9 +318,8 @@ void Scrn00SysOptExit(void)
 }
 
 //------------------------------------------------------------------------------
-/*
-Local Functions - Button Callbacks
-*/
+//Local Functions - Button Callbacks
+
 static void _Key1Release(void* userData)
 {
     // "Back to Start" button pressed
@@ -337,9 +369,8 @@ static void _Key5Release(void* userData)
 }
 
 //------------------------------------------------------------------------------
-/*
-Local Functions - Drawing Helpers
-*/
+//Local Functions - Drawing Helpers
+
 // Draw static labels on LAYER_BACK
 static void _DrawStaticLabels(void)
 {
@@ -347,7 +378,7 @@ static void _DrawStaticLabels(void)
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 25,
         HORIZONTAL_ALIGNMENT_CENTRE,
         VERTICAL_ALIGNMENT_TOP, 0);
-    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options", BLACK, 100, LAYER_FRONT);
 
     // Setup smaller font for labels
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 15,
@@ -364,15 +395,20 @@ static void _DrawStaticLabels(void)
     SimpleTextDraw(leftX, startY, "DatMode = ", BLACK, 100, LAYER_BACK);
     SimpleTextDraw(leftX, startY + lineSpacing, "232 Xmit = ", BLACK, 100, LAYER_BACK);
     SimpleTextDraw(leftX, startY + 2 * lineSpacing, "NozMap = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(leftX, startY + 3 * lineSpacing, "BktMap = ", BLACK, 100, LAYER_BACK);
 
     // Right Column Labels (3 items)
     SimpleTextDraw(rightX, startY, "IntMap = ", BLACK, 100, LAYER_BACK);
     SimpleTextDraw(rightX, startY + lineSpacing, "IntSteer = ", BLACK, 100, LAYER_BACK);
     SimpleTextDraw(rightX, startY + 2 * lineSpacing, "StaType = ", BLACK, 100, LAYER_BACK);
+    SimpleTextDraw(rightX, startY + 3 * lineSpacing, "Xmit 232 = ", BLACK, 100, LAYER_BACK);
 }
 
 static void _DrawDynamicValues(void)
 {
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 5, "System Options ", BLACK, 100, LAYER_FRONT);
+
     // Setup font for dynamic text
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 15,
         HORIZONTAL_ALIGNMENT_LEFT,
@@ -385,7 +421,7 @@ static void _DrawDynamicValues(void)
     const int lineSpacing = 30;
 
     // Left Column Dynamic Values (COMMS_MODE, STATION_TYPE, DATA_MODE)
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < HalfSysOps; i++)
     {
         const char* displayText = m_SYSTEMOPTIONS_DISPLAY[i].getValueStr();
         int yPos = startY + (i * lineSpacing);
@@ -393,10 +429,10 @@ static void _DrawDynamicValues(void)
     }
 
     // Right Column Dynamic Values (NOZZLEMAP_FLIP, BUCKETMAP_FLIP, TABMAP_FLIP)
-    for (int i = 3; i < SYSOPT_INDEX_MAX; i++)
+    for (int i = 4; i < SYSOPT_INDEX_MAX; i++)
     {
         const char* displayText = m_SYSTEMOPTIONS_DISPLAY[i].getValueStr();
-        int yPos = startY + ((i - 3) * lineSpacing); // Corrected from (i - 4) to (i - 3)
+        int yPos = startY + ((i - HalfSysOps) * lineSpacing); // Corrected from (i - 4) to (i - 3)
         SimpleTextDraw(rightDynamicX, yPos, displayText, BLACK, 100, LAYER_FRONT);
     }
 }
@@ -411,7 +447,7 @@ static void _DrawHighlight(void)
     const int startY = 55;
     const int rectHeight = 30;
 
-    if (s_currentOptionIndex < 3)
+    if (s_currentOptionIndex < HalfSysOps)
     {
         // Left Column
         int y = startY + (s_currentOptionIndex * rectHeight);
@@ -420,7 +456,7 @@ static void _DrawHighlight(void)
     else
     {
         // Right Column
-        int y = startY + ((s_currentOptionIndex - 3) * rectHeight);
+        int y = startY + ((s_currentOptionIndex - HalfSysOps) * rectHeight);
         rectangleEx(rightRectX1, y, rightRectX2, y + 30, NORMAL, SOLID, BLACK, 100, LAYER_FRONT);
     }
 }
