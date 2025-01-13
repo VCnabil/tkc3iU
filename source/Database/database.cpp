@@ -261,6 +261,47 @@ BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T 
 	uint8_t nmeaInstanceOrSequenceID = 255;
 	return _Database_Set_Individual(DataBaseIndex, engineIndex, pData, DataType, DBSource, canPort, sourceAddress, nmeaInstanceOrSequenceID);
 }
+BOOL Database_Set_Conditional(
+	int dbIndex,
+	const DBVAR_T* pData,
+	DBVARTYPE_T dataType,
+	DBSOURCE_T source
+)
+{
+	// 1) Decide if we allow writing based on current data mode:
+	if (source == DBSOURCE_CAN)
+	{
+		// If not in CANbus or GPSI mode, skip
+		if (SettingsGetDataMode() != CANbus_mode &&
+			SettingsGetDataMode() != CANbus_GPSI_mode)
+		{
+			return FALSE; // do nothing
+		}
+	}
+	else if (source == DBSOURCE_NMEA0183)
+	{
+		// If not in RS232 mode, skip
+		if (SettingsGetDataMode() != rs232_mode)
+		{
+			return FALSE; // do nothing
+		}
+	}
+
+	// 2) If we get here, the source is currently allowed
+	//    We'll just pass some "dummy" arguments for canPort or addresses,
+	//    because for NMEA or local sources we might not care.
+	BOOL bRet = _Database_Set(
+		dbIndex,
+		pData,
+		dataType,
+		source,
+		(CAN_PORTS_T)0, // canPort dummy
+		255,            // sourceAddress dummy
+		255             // nmeaInstanceOrSequenceID dummy
+	);
+
+	return bRet;
+}
 float DataBase_GetDataFromElementAsFloat(DBELEMENT_T* Element)
 {
 	float ReturnValue = 0.0f;
@@ -402,12 +443,32 @@ static void _Database_InitValues(void)
 			for (InstanceIndex = 0; InstanceIndex < DB_INSTANCE_INVALID; InstanceIndex++)
 			{
 			}
-			m_DBElements[db_VECTOR_port_nozzle][0].Data.flt = 11;
-			m_DBElements[db_VECTOR_stbd_nozzle][0].Data.flt = 22;
-			m_DBElements[db_VECTOR_port_bucket][0].Data.flt = 33;
-			m_DBElements[db_VECTOR_stbd_bucket][0].Data.flt = 44;
-			m_DBElements[db_VECTOR_port_trimtab][0].Data.flt = 555;
-			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.flt = 666;
+			m_DBElements[db_VECTOR_port_nozzle][0].Data.ui = 11;
+			m_DBElements[db_VECTOR_stbd_nozzle][0].Data.ui = 22;
+			m_DBElements[db_VECTOR_port_bucket][0].Data.ui = 33;
+			m_DBElements[db_VECTOR_stbd_bucket][0].Data.ui = 44;
+			m_DBElements[db_VECTOR_port_trimtab][0].Data.ui = 55;
+			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.ui = 66;
+			m_DBElements[db_VECTOR_signal_fault_error][0].Data.ui = 77;
+			m_DBElements[db_VECTOR_nfu_fault_error][0].Data.ui = 88;
+			m_DBElements[db_VECTOR_STA1_fault_error][0].Data.ui = 99;
+			m_DBElements[db_VECTOR_STA2_fault_error][0].Data.ui = 100;
+			m_DBElements[db_VECTOR_STA3_fault_error][0].Data.ui = 101;
+			m_DBElements[db_VECTOR_cal_fault_error][0].Data.ui = 102;
+			m_DBElements[db_VECTOR_interlock_fault_error][0].Data.ui = 103;
+			m_DBElements[db_VECTOR_I14_INDICConfig][0].Data.ui = 104;
+			m_DBElements[db_VECTOR_I15_doEnableRS232][0].Data.ui = 105;
+			m_DBElements[db_VECTOR_I16_autocalSTATUS][0].Data.ui = 106;
+			m_DBElements[db_VECTOR_VCICAN_fault_error][0].Data.ui = 107;
+			m_DBElements[db_VECTOR_VCIstatus][0].Data.ui = 108;
+			m_DBElements[db_VECTOR_CCIM_AIN1][0].Data.ui = 109;
+			m_DBElements[db_VECTOR_CCIM_AIN2][0].Data.ui = 110;
+			m_DBElements[db_VECTOR_CCIM_AIN3][0].Data.ui = 111;
+			m_DBElements[db_VECTOR_CCIM_AIN4][0].Data.ui = 112;
+			m_DBElements[db_VECTOR_CCIM_AIN5][0].Data.ui = 113;
+			m_DBElements[db_VECTOR_CCIM_AIN6][0].Data.ui = 114;
+
+
 		}
 		MutexUnlock(&m_mutexHandle);
 	}

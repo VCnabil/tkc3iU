@@ -76,8 +76,15 @@ int NMEA0183_ProcessPVCI(char* pBuffer)
 
         // Store in the database
         DBVAR_T dbData;
-        dbData.flt = (float)value;
-        Database_Set_NMEA0183(PVCIFieldToDBIndex[i], &dbData, DBVARTYPE_FLOAT, 0);
+        dbData.ui = (uint32_t)value;
+       //  Database_Set_NMEA0183(PVCIFieldToDBIndex[i], &dbData, DBVARTYPE_UNSIGNED_INT, 0);
+        Database_Set_Conditional(
+            PVCIFieldToDBIndex[i],   // which DB index to write
+            &dbData,                 // pointer to the DBVAR_T data
+            DBVARTYPE_UNSIGNED_INT,  // the type (so we interpret dbData.ui)
+            DBSOURCE_NMEA0183        // source is RS232
+        );
+        
     }
 
     return 0;

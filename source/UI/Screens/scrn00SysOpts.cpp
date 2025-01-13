@@ -276,12 +276,22 @@ void Scrn00SysOptCreate(void)
     vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
 
     // Setup button images (ensure these are defined appropriately)
-    ButtonBarSetKeyImages(KEYINDEX_1, &view_meters, &view_meters); // Back to Start
-    ButtonBarSetKeyImages(KEYINDEX_2, &down, &down);               // Previous Option
-    ButtonBarSetKeyImages(KEYINDEX_3, &up, &up);                   // Next Option
-    ButtonBarSetKeyImages(KEYINDEX_4, &toggle, &toggle);           // Toggle Option
-    ButtonBarSetKeyImages(KEYINDEX_5, &blank, &blank);             // Exit to Start
+    //ButtonBarSetKeyImages(KEYINDEX_1, &view_meters, &view_meters); // Back to Start
+    //ButtonBarSetKeyImages(KEYINDEX_2, &down, &down);               // Previous Option
+    //ButtonBarSetKeyImages(KEYINDEX_3, &up, &up);                   // Next Option
+    //ButtonBarSetKeyImages(KEYINDEX_4, &toggle, &toggle);           // Toggle Option
+    //ButtonBarSetKeyImages(KEYINDEX_5, &blank, &blank);             // Exit to Start
 
+            // KEY 1 = "back to Start"
+    ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 10, BLACK, "back to", "Start");
+    // KEY 2 = "NEXT OPT"
+    ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 10, BLACK, "DN", "");
+    // KEY 3 = "PREV OPT"
+    ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 10, BLACK, "UP", "");
+    // KEY 4 = "TOGG OPT"
+    ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 10, BLACK, "TOGG", "OPT");
+    // KEY 5 = "EXIT"
+    ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 10, BLACK, "EXIT", "");
     // Setup buttons and their callbacks
     ButtonBarSetHeight(48);
     ButtonBarSetBackgroundColour(MAKERGB565(121, 137, 121));
@@ -323,7 +333,8 @@ void Scrn00SysOptExit(void)
 static void _Key1Release(void* userData)
 {
     // "Back to Start" button pressed
-    MMIScreenGoto(SCREENID_PASSCODE);
+   // MMIScreenGoto(SCREENID_PASSCODE);
+    MMIScreenGoto(SCREENID_START);
 }
 
 static void _Key2Release(void* userData)

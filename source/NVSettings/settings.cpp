@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 
 #include "project.h"
-#include "VCInc.h"  // <-- Yes as well include this if using #defines or references from VCInc.h 
+#include "VCInc.h"   
 
 static void _SettingsLoadDefaults(void);
 

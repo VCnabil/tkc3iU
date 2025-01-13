@@ -64,6 +64,11 @@ void CANDeInit(void)
 //------------------------------------------------------------------------------
 void CANProcessRx(void)
 {
+  
+    //if (SettingsGetDataMode() != CANbus_mode && SettingsGetDataMode() != CANbus_GPSI_mode)
+    //{
+    //    return;
+    //}
     // Check both ports
     uint32_t canPort;
     for (canPort = CAN_PORT1; canPort < CAN_MAX_PORTS; canPort++)
@@ -151,9 +156,13 @@ static void CANDecodeRxExt(CAN_PORTS_T canPort,
 	// Which PGN was it?
 	switch (CANIDEXT_GETPGN(pMsg->id))
 	{
-	//case 0xFEE5:
-	//	J1939_PGN_FEE5_HOURS(canPort, pMsg);
-	//	break;
+	 case PGN_FEFC_INDIC:
+	 	J1939_FEFC_INDIC(canPort, pMsg);
+	 	break;
+        
+    case PGN_FF8D_FAULTS:
+		J1939_FF8D_FAULTS(canPort, pMsg);
+		break;
 
 	default:
 		break;

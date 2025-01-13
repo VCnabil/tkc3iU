@@ -33,8 +33,11 @@ typedef enum
     SCREENID_ALARMSUMMARY,
     SCREENID_DEBUGCAN,
     SCREENID_DEBUGCOM,
+    SCREENID_SCRN01FAULTS,
+    SCREENID_SCRN02FAULTS,
+    SCREENID_SCRN01LIVEDBVIEW,
 /// Must be last!
-	SCREENID_MAX
+SCREENID_MAX
 } SCREENID_T;
 
 //------------------------------------------------------------------------------

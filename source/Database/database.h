@@ -43,7 +43,7 @@ typedef enum
 // This Enum is used for the database to control its size as well as to provide translations for the database descriptor's
 typedef enum
 {
-	//NEW VECTOR DATABASE PARAMETERS first 16
+	//NEW VECTOR DATABASE PARAMETERS first 19
 	db_VECTOR_port_nozzle,
 	db_VECTOR_stbd_nozzle,
 	db_VECTOR_port_bucket,
@@ -74,7 +74,8 @@ typedef enum
 	db_VECTOR_VCICAN_fault_error,
 	// VCIstatus i18
 	db_VECTOR_VCIstatus,
- 
+ 	// gENERALaLARM i19
+	db_VECTOR_GAL_fault_error, 
 	//PARAMETERS FOR CCIM DATA
 	db_VECTOR_CCIM_AIN1,
 	db_VECTOR_CCIM_AIN2,
@@ -135,6 +136,8 @@ BOOL DataBase_IsItemValid(int DataBaseIndex, int InstanceIndex);
 BOOL DataBase_Get(DBELEMENT_T* p_DB_Element, int DataBaseIndex, int InstanceIndex);
 BOOL Database_Set_CAN(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T DataType, CAN_PORTS_T canPort, uint8_t nmeaInstanceOrSequenceID, uint8_t sourceAddress);
 BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T DataType, uint8_t engineIndex);
+// --- The new function prototype ---
+BOOL Database_Set_Conditional(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataType,DBSOURCE_T source);
 BOOL Database_GetIndexFromString(const char* String, uint32_t* DBIndex);
 int Database_GetItemDescription(char* destination, size_t destinationSize, int DataBaseIndex);
 void Database_SetItemDescription(int DataBaseIndex, const char* pDescription, uint32_t descriptionLength);

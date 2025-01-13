@@ -5,6 +5,7 @@
 
 #include "project.h"
 #include <ctype.h>
+#include <NVSettings/settings.h>
  
 
 #define IS_0183_SOF(c) (((c)=='$')||((c)=='!'))
@@ -79,7 +80,10 @@ BOOL UARTSend(uint8_t *pData, uint32_t dataLen)
 // Called from main loop to decode any messages received.
 void UARTDecode(void)  
 {
-	
+
+//	if (SettingsGetDataMode() != rs232_mode) return;
+
+
 	// Have we received a message which hasn't been processed?
 	while (_DecodeNextMessage())
 	{

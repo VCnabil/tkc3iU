@@ -36,11 +36,13 @@ void ScreensInit(void)
     MMIRegisterScreen(SCREENID_PASSCODE, Scrn00PasscodeEnter, Scrn00PasscodeCreate, Scrn00PasscodeUpdate, Scrn00PasscodeExit);
     MMIRegisterScreen(SCREENID_CENTRALALARM, Scrn00CentralAlarmEnter, Scrn00CentralAlarmCreate, Scrn00CentralAlarmUpdate, Scrn00CentralAlarmExit);
     MMIRegisterScreen(SCREENID_ALARMSUMMARY, Scrn00AlarmSummaryEnter, Scrn00AlarmSummaryCreate, Scrn00AlarmSummaryUpdate, Scrn00AlarmSummaryExit);
+	MMIRegisterScreen(SCREENID_SCRN01FAULTS, Scrn01FaultsEnter, Scrn01FaultsCreate, Scrn01FaultsUpdate, Scrn01FaultsExit);
+	MMIRegisterScreen(SCREENID_SCRN02FAULTS, scrn02FaultsEnter, scrn02FaultsCreate, scrn02FaultsUpdate, scrn02FaultsExit);
+    MMIRegisterScreen(SCREENID_SCRN01LIVEDBVIEW, Scrn01LiveDbViewEnter, Scrn01LiveDbViewCreate, Scrn01LiveDbViewUpdate, Scrn01LiveDbViewExit);
 	
-//
 	// Initial screen.
-	//MMIScreenGoto(SCREENID_PASSCODE);  
-	MMIScreenGoto(SCREENID_START);
+MMIScreenGoto(SCREENID_START);
+	//MMIScreenGoto(SCREENID_START);
 
 #if defined(ENABLE_FPS_COUNTER)
 	// Enable the Frames Per Second counter on the screen
