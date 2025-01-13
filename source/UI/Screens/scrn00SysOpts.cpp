@@ -365,7 +365,7 @@ static void _Key4Release(void* userData)
 static void _Key5Release(void* userData)
 {
     // "Exit to Start" button pressed
-    MMIScreenGoto(SCREENID_START);
+    MMIScreenGoto(SCREENID_TEST);
 }
 
 //------------------------------------------------------------------------------

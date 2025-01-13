@@ -26,6 +26,7 @@
 #include "System/lighting.h"
 #include "System/ipAddress.h"
 #include "UART/NMEA0183/extractField.h"
+#include "UART/NMEA0183/PVCI.h"
 #include "UART/uart.h"
 #include "Database/database.h"
 #include "UI/ttfonts.h"
@@ -33,10 +34,14 @@
 #include "UI/buttonbar.h"
 #include "UI/keyboard.h"
 //screens
+
+#include "UI/Screens/scrn00debugCAN.h"
+#include "UI/Screens/scrn00debugCOM.h"
 #include "UI/Screens/scrn00Start.h"
 #include "UI/Screens/scrn00SysOpts.h"
 #include "UI/Screens/scrn01SysOpts.h"
 #include "UI/Screens/scrn00Test.h"
+#include "UI/Screens/scrn00Test2.h"
 #include "UI/Screens/screen00Faults.h"
 #include "UI/Screens/scrn00About.h"
 #include "UI/Screens/scrn00Zerothrust.h"

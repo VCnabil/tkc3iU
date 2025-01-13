@@ -1,1 +1,1 @@
-#define SVN_REVISION "6" 
+#define SVN_REVISION "7" 

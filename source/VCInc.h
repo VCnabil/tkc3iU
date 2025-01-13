@@ -5,7 +5,10 @@
 //------------------------------------------------------------------------------
 #ifndef __VCINC_H__
 #define __VCINC_H__
-
+#include "syslib.h"   // or whichever file declares MUTEXHANDLE_T
+#include <vector>
+#include <string>
+#define DATABASE_MAX_VECTORVARS 16 //the first 16 variables are Vectors Control inc. variables
 #define MAX_PROPN_FAULTS_DISP     11 // maximum number of faults displayed per screen 
 #define MAX_SYSTEM_PARAMETERS 8  //defines number of system parameters in the system options screen
 #define rs232_mode   1           //indication data received via rs232 (fault data is always)
@@ -51,7 +54,19 @@ typedef enum
     SYSOPT_INDEX_MAX
 } SYSOPT_INDEX_E;
 
+// Shared string for database elements
+extern std::vector<std::string> dbElementStrings;
 
+
+extern int gPVCICallCount;        // Just the declaration
+extern MUTEXHANDLE_T gPVCICountMutex;
+#define DEBUG_MSG_MAX_LENGTH 256
+
+// Global debug buffer
+extern char gDebugMsg[DEBUG_MSG_MAX_LENGTH];
+
+// Function to set the debug message
+void SetDebugMessage(const char* format, ...);
 #endif // __VCINC_H__
 
 

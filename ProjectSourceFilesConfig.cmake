@@ -1,7 +1,7 @@
 
 #[[
 
-This is the User Adjustable CMake File for this project and should be updated when new source files are added or old ones removed.
+This is the User Adjustable CMake File for this project and should be updated when new source files are added or old ones removed. 
 
 ]]
 
@@ -16,17 +16,20 @@ source/System/lighting.cpp
 source/System/ipAddress.cpp
 source/UART/uart.cpp
 source/UART/NMEA0183/extractField.cpp
+source/UART/NMEA0183/PVCI.cpp 
 source/UI/screens.cpp
 source/UI/ttfonts.cpp
 source/UI/buttonbar.cpp
 source/UI/keyboard.cpp
 source/data.cpp
 source/main.cpp
+source/VCIncShared.cpp 
 #screens
 source/UI/Screens/scrn00Start.cpp
 source/UI/Screens/scrn00SysOpts.cpp
 source/UI/Screens/scrn01SysOpts.cpp
 source/UI/screens/scrn00Test.cpp
+source/UI/screens/scrn00Test2.cpp
 source/UI/Screens/screen00Faults.cpp
 source/UI/Screens/scrn00About.cpp
 source/UI/Screens/scrn00Zerothrust.cpp
@@ -36,5 +39,6 @@ source/UI/Screens/scrn00Passcode.cpp
 source/UI/Screens/scrn00CentralAlarm.cpp
 source/UI/Screens/scrn00AlarmSummary.cpp
 source/UI/Screens/scrn00HideZero.cpp
-
+source/UI/Screens/scrn00debugCAN.cpp
+source/UI/Screens/scrn00debugCOM.cpp
 )

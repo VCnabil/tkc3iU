@@ -5,6 +5,7 @@
 
 #include "project.h"
 #include <ctype.h>
+ 
 
 #define IS_0183_SOF(c) (((c)=='$')||((c)=='!'))
 
@@ -21,8 +22,11 @@ typedef struct
 //------------------------------------------------------------------------------
 
 // Receive Buffer
+
+//process example line "$PVCI,0,0,500,500,0,0,7,0,14,0,0,0,0,3,0,0,65,2*0C\r"
+ 
 static const HandlerMapping_t m_mapping[] = {
-	 {"VTG", nullptr },
+	{ "PVCI", NMEA0183_ProcessPVCI },
 };
 
 static char m_RxMsgBuf[UART_MAX_MESSAGE_SIZE];
@@ -75,6 +79,7 @@ BOOL UARTSend(uint8_t *pData, uint32_t dataLen)
 // Called from main loop to decode any messages received.
 void UARTDecode(void)  
 {
+	
 	// Have we received a message which hasn't been processed?
 	while (_DecodeNextMessage())
 	{
@@ -140,36 +145,95 @@ uint8_t* PeekMessage(peek_t peekType, int32_t queueIndex, uint8_t  *buffer, uint
 //------------------------------------------------------------------------------
 // PRIVATE FUNCTIONS
 //------------------------------------------------------------------------------
-
 static bool _DecodeNextMessage(void)
 {
 	bool processed = false;
+
 	MutexLock(&m_queueLock);
+
 	if (m_QueueInfo.NextReadIndex != m_QueueInfo.NextWriteIndex)
 	{
 		processed = true;
 		watchdog_refresh();
+
 		if (strlen(m_MsgQueue[m_QueueInfo.NextReadIndex]) > 6)
 		{
-			if (IS_0183_SOF(m_MsgQueue[m_QueueInfo.NextReadIndex][0]))
+			if (IS_0183_SOF(m_MsgQueue[m_QueueInfo.NextReadIndex][0]))  // '$' or '!'
 			{
-				if (m_MsgQueue[m_QueueInfo.NextReadIndex][1] != m_MsgQueue[m_QueueInfo.NextReadIndex][0])
+				if (m_MsgQueue[m_QueueInfo.NextReadIndex][1] != m_MsgQueue[m_QueueInfo.NextReadIndex][0]) //make sure we are comparing from index 1 which is P  not $
 				{
 					for (uint32_t mappingIndex = 0; mappingIndex < (sizeof(m_mapping) / sizeof(m_mapping[0])); mappingIndex++)
 					{
-						if (strncmp(&m_MsgQueue[m_QueueInfo.NextReadIndex][3], m_mapping[mappingIndex].msgId, 3) == 0)
+						if (strncmp(&m_MsgQueue[m_QueueInfo.NextReadIndex][1], m_mapping[mappingIndex].msgId, strlen(m_mapping[mappingIndex].msgId)) == 0)
 						{
+							gPVCICallCount++;
 							m_mapping[mappingIndex].decode(m_MsgQueue[m_QueueInfo.NextReadIndex]);
 						}
 					}
 				}
 			}
 		}
+		// Advance the read index to the next message in the queue
 		m_QueueInfo.NextReadIndex = (m_QueueInfo.NextReadIndex + 1) % UART_MAX_MESSAGES;
 	}
+
+	MutexUnlock(&m_queueLock);
+
+	return processed;
+}
+
+static bool _DecodeNextMessageWithDebug(void)
+{
+	bool processed = false;
+	MutexLock(&m_queueLock);
+
+	if (m_QueueInfo.NextReadIndex != m_QueueInfo.NextWriteIndex)
+	{
+		processed = true;
+		watchdog_refresh();
+
+		// Set debug message for received message
+		SetDebugMessage("Received: %s", m_MsgQueue[m_QueueInfo.NextReadIndex]);
+
+		if (strlen(m_MsgQueue[m_QueueInfo.NextReadIndex]) > 6)
+		{
+			if (IS_0183_SOF(m_MsgQueue[m_QueueInfo.NextReadIndex][0]))  // '$' or '!'
+			{
+				if (m_MsgQueue[m_QueueInfo.NextReadIndex][1] != m_MsgQueue[m_QueueInfo.NextReadIndex][0])
+				{
+					for (uint32_t mappingIndex = 0; mappingIndex < (sizeof(m_mapping) / sizeof(m_mapping[0])); mappingIndex++)
+					{
+						if (strncmp(&m_MsgQueue[m_QueueInfo.NextReadIndex][1], m_mapping[mappingIndex].msgId, strlen(m_mapping[mappingIndex].msgId)) == 0)
+						{
+							gPVCICallCount++;
+							SetDebugMessage("Match found: %s", m_mapping[mappingIndex].msgId);
+							m_mapping[mappingIndex].decode(m_MsgQueue[m_QueueInfo.NextReadIndex]);
+						}
+						else
+						{
+							SetDebugMessage("No match: %s", m_MsgQueue[m_QueueInfo.NextReadIndex]);
+						}
+					}
+				}
+				else
+				{
+					SetDebugMessage("Invalid SOF: %c", m_MsgQueue[m_QueueInfo.NextReadIndex][0]);
+				}
+			}
+		}
+		// Advance the read index to the next message in the queue
+		m_QueueInfo.NextReadIndex = (m_QueueInfo.NextReadIndex + 1) % UART_MAX_MESSAGES;
+	}
+	else
+	{
+		SetDebugMessage("No new messages in queue.");
+	}
+
 	MutexUnlock(&m_queueLock);
 	return processed;
 }
+ 
+
 static void _UARTProcess(uint8_t* pBuffer, uint32_t bufLen)
 {
 	uint32_t rxIdx = 0;
@@ -203,3 +267,5 @@ static void _UARTProcess(uint8_t* pBuffer, uint32_t bufLen)
 		}
 	}
 }
+
+ 

@@ -47,6 +47,9 @@ static uint32_t m_timerFunctionLastUptime;
 static DB_INFO_TABLE_T m_DBINFO[] =
 {
 	//NEW VECTOR DATABASE PARAMETERS
+ 
+
+	//PARAMETERS FOR VECTOR DATABASE
 	{ DBUNITS_NONE, "Vector Port Nozzle", db_VECTOR_port_nozzle, { 0 }},
 	{ DBUNITS_NONE, "Vector Stbd Nozzle", db_VECTOR_stbd_nozzle, { 0 }},
 	{ DBUNITS_NONE, "Vector Port Bucket", db_VECTOR_port_bucket, { 0 }},
@@ -58,10 +61,15 @@ static DB_INFO_TABLE_T m_DBINFO[] =
 	{ DBUNITS_NONE, "Vector STA1 Fault Error", db_VECTOR_STA1_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector STA2 Fault Error", db_VECTOR_STA2_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector STA3 Fault Error", db_VECTOR_STA3_fault_error, { 0 }},
-	{ DBUNITS_NONE, "Vector CAL Fault Error", db_VECTOR_cal_fault_error, { 0 }},
+	{ DBUNITS_NONE, "Vector Cal Fault Error", db_VECTOR_cal_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector Interlock Fault Error", db_VECTOR_interlock_fault_error, { 0 }},
+	{ DBUNITS_NONE, "Vector I14 INDICConfig", db_VECTOR_I14_INDICConfig, { 0 }},
+	{ DBUNITS_NONE, "Vector I15 doEnableRS232", db_VECTOR_I15_doEnableRS232, { 0 }},
+	{ DBUNITS_NONE, "Vector I16 autocalSTATUS", db_VECTOR_I16_autocalSTATUS, { 0 }},
 	{ DBUNITS_NONE, "Vector VCICAN Fault Error", db_VECTOR_VCICAN_fault_error, { 0 }},
-	{ DBUNITS_NONE, "Vector MISC", db_VECTOR_MISC, { 0 }},
+	{ DBUNITS_NONE, "Vector VCIstatus", db_VECTOR_VCIstatus, { 0 }},
+
+	 
 	//PARAMETERS FOR CCIM DATA
 	{ DBUNITS_NONE, "Vector CCIM AIN1", db_VECTOR_CCIM_AIN1, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN2", db_VECTOR_CCIM_AIN2, { 0 }},
@@ -394,12 +402,12 @@ static void _Database_InitValues(void)
 			for (InstanceIndex = 0; InstanceIndex < DB_INSTANCE_INVALID; InstanceIndex++)
 			{
 			}
-			m_DBElements[db_VECTOR_port_nozzle][0].Data.flt = 1000;
-			m_DBElements[db_VECTOR_stbd_nozzle][0].Data.flt = 1000;
-			m_DBElements[db_VECTOR_port_bucket][0].Data.flt = 1000;
-			m_DBElements[db_VECTOR_stbd_bucket][0].Data.flt = 1000;
-			m_DBElements[db_VECTOR_port_trimtab][0].Data.flt = 1000;
-			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.flt = 1000;
+			m_DBElements[db_VECTOR_port_nozzle][0].Data.flt = 11;
+			m_DBElements[db_VECTOR_stbd_nozzle][0].Data.flt = 22;
+			m_DBElements[db_VECTOR_port_bucket][0].Data.flt = 33;
+			m_DBElements[db_VECTOR_stbd_bucket][0].Data.flt = 44;
+			m_DBElements[db_VECTOR_port_trimtab][0].Data.flt = 555;
+			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.flt = 666;
 		}
 		MutexUnlock(&m_mutexHandle);
 	}

@@ -19,6 +19,13 @@ void ScreensInit(void)
     MMIRegisterScreen(SCREENID_SYSOPTS, Scrn00SysOptUpdate, Scrn00SysOptCreate, Scrn00SysOptUpdate, Scrn00SysOptExit);
 	MMIRegisterScreen(SCREENID_SYSOPTS01, Scrn01SysOptUpdate, Scrn01SysOptCreate, Scrn01SysOptUpdate, Scrn01SysOptExit);
     MMIRegisterScreen(SCREENID_TEST, Scrn00TestEnter, Scrn00TestCreate, Scrn00TestUpdate, Scrn00TestExit);
+	MMIRegisterScreen(SCREENID_TEST2, Scrn00Test2Enter, Scrn00Test2Create, Scrn00Test2Update, Scrn00Test2Exit);
+	//SCREENID_DEBUGCAN
+	MMIRegisterScreen(SCREENID_DEBUGCAN, Scrn00DebugCANEnter, Scrn00DebugCANCreate, Scrn00DebugCANUpdate, Scrn00DebugCANExit);
+	//SCREENID_DEBUGCOM
+	MMIRegisterScreen(SCREENID_DEBUGCOM, Scrn00DebugCOMEnter, Scrn00DebugCOMCreate, Scrn00DebugCOMUpdate, Scrn00DebugCOMExit);
+
+
     MMIRegisterScreen(SCREENID_FAULTS, Scrn00FaultsEnter, Scrn00FaultsCreate, Scrn00FaultsUpdate, Scrn00FaultsExit);
     MMIRegisterScreen(SCREENID_ABOUT, Scrn00AboutEnter, Scrn00AboutCreate, Scrn00AboutUpdate, Scrn00AboutExit);
     MMIRegisterScreen(SCREENID_ZEROTHRUST, Scrn00ZerothrustEnter, Scrn00ZerothrustCreate, Scrn00ZerothrustUpdate, Scrn00ZerothrustExit);
@@ -32,7 +39,8 @@ void ScreensInit(void)
 	
 //
 	// Initial screen.
-	MMIScreenGoto(SCREENID_PASSCODE);
+	//MMIScreenGoto(SCREENID_PASSCODE);  
+	MMIScreenGoto(SCREENID_START);
 
 #if defined(ENABLE_FPS_COUNTER)
 	// Enable the Frames Per Second counter on the screen

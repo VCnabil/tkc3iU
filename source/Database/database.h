@@ -43,22 +43,38 @@ typedef enum
 // This Enum is used for the database to control its size as well as to provide translations for the database descriptor's
 typedef enum
 {
-	//NEW VECTOR DATABASE PARAMETERS
+	//NEW VECTOR DATABASE PARAMETERS first 16
 	db_VECTOR_port_nozzle,
 	db_VECTOR_stbd_nozzle,
 	db_VECTOR_port_bucket,
 	db_VECTOR_stbd_bucket,
 	db_VECTOR_port_trimtab,
 	db_VECTOR_stbd_trimtab,
+	//senssors i7
 	db_VECTOR_signal_fault_error,
+	//nfu i8
 	db_VECTOR_nfu_fault_error,
+	//sta1 i9
 	db_VECTOR_STA1_fault_error,
+	//sta2 i10
 	db_VECTOR_STA2_fault_error,
+	//sta3 i11
 	db_VECTOR_STA3_fault_error,
+	//autocal faults and trimtab faults i12
 	db_VECTOR_cal_fault_error,
+	//interlock faults i13
 	db_VECTOR_interlock_fault_error,
+	//Ondication Configuration i14
+	db_VECTOR_I14_INDICConfig,
+	//vcican Enable RS232 i15
+	db_VECTOR_I15_doEnableRS232,
+	// autocalSTATUS i16
+	db_VECTOR_I16_autocalSTATUS,
+	//vcican faults i17
 	db_VECTOR_VCICAN_fault_error,
-	db_VECTOR_MISC,
+	// VCIstatus i18
+	db_VECTOR_VCIstatus,
+ 
 	//PARAMETERS FOR CCIM DATA
 	db_VECTOR_CCIM_AIN1,
 	db_VECTOR_CCIM_AIN2,
