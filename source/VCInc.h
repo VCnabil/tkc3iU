@@ -8,6 +8,7 @@
 #include "syslib.h"   // or whichever file declares MUTEXHANDLE_T
 #include <vector>
 #include <string>
+#define TIMER_NETWORK_PRESET           100   /* wait 10s before displaying LOST CONNECTION   */
 #define NUM_FAULT_ENTRIES 32
 #define DATABASE_MAX_VECTORVARS 18 //the first 16 variables are Vectors Control inc. variables
 #define MAX_PROPN_FAULTS_DISP     11 // maximum number of faults displayed per screen 
@@ -96,6 +97,67 @@ typedef struct
 extern FAULTS_DB m_FAULTS_DB[];
 
 
+//These are assigned values based on the fault codes (recieved via RS232)
+extern int PTab_sigFault, STab_sigFault, PNoz_sigFault, SNoz_sigFault, PBkt_sigFault, SBkt_sigFault;
+extern int PTab_nfuFault, STab_nfuFault, PNoz_nfuFault, SNoz_nfuFault, PBkt_nfuFault, SBkt_nfuFault;
+extern int JoyX1_Fault, JoyY1_Fault, PLev1_Fault, SLev1_Fault, Helm1_Fault, Idle1_Fault;
+extern int JoyX2_Fault, JoyY2_Fault, PLev2_Fault, SLev2_Fault, Helm2_Fault, Idle2_Fault;
+extern int JoyX3_Fault, JoyY3_Fault, PLev3_Fault, SLev3_Fault, Helm3_Fault, Idle3_Fault;
+extern int Cal_Fault, Roll1_Fault, Trim1_Fault, Inbd_Fault, Otbd_Fault, AP_Fault, clutchDiseng_Fault, generalDock_Fault, Roll2_Fault, Trim2_Fault;
+extern int Number_Faults, Number_Faults_PropSys, Number_Faults_CAN, Number_Faults_CentralAlarmSystem;
+extern int RCV_CANFault, VCI_CAN_Fault, ClutchST1_CAN_Fault, ClutchST2_CAN_Fault;
+
+
+
+extern unsigned int Central_Alarm_01, Central_Alarm_02, Central_Alarm_03, Central_Alarm_04, Central_Alarm_05;
+extern unsigned int Central_Alarm_06, Central_Alarm_07, Central_Alarm_08, Central_Alarm_09, Central_Alarm_10;
+extern unsigned int Central_Alarm_11, Central_Alarm_12, Central_Alarm_13, Central_Alarm_14, Central_Alarm_15;
+extern unsigned int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
+
+extern unsigned int* centralAlarmArray[];
+
+extern int No_or_Bad_Data, No_or_Bad_CAN_Data, No_or_Bad_CAN_Data_CentralAlarmSys, CCIM_Fault, CCIM_Fault_Counter;
+extern int Serial_Fault, CAN_Fault, ControlSystem_Fault, Faults_on_Screen, MS_CAN_Fault, CentralAlarmSys_Fault, CentralAlarmSys_CAN_Fault;
+
+extern int InMainScreen, InFaultScreen, AlarmMuteFlag, AlarmMuteFlag_CentralAlarm, StaticAlarmDisplayed, clearonce;
+extern int SCFaultCount, CSFaultCount, CANFaultCount;
+extern unsigned int uiUnacknowledged_PropulsionSystemFault;
+extern unsigned int vci_status, autopilot, dk_tr_mode;  // these variables are used to display the status text on the screen
+
+
+//allows wing stations to read the rs232->can data instead of the CCIM can data.
+extern int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
+extern int PORTTAB_rs232counter, STBDTAB_rs232counter;
+
+
+//for calibration
+extern unsigned int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
+extern int CAL_FLAG;
+
+extern int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP;
+extern int SB_MAX_TEMP, SB_MIN_TEMP, SN_MAX_TEMP, SN_MIN_TEMP;
+extern int PT_MAX_TEMP, PT_MIN_TEMP, ST_MAX_TEMP, ST_MIN_TEMP;
+extern int PB_NEUTRAL_THRUST_TEMP, SB_NEUTRAL_THRUST_TEMP;
+
+
+
+// Extern declarations for Alarm Flags (assuming they are defined elsewhere)
+extern int AlarmMuteFlag;
+extern int uiUnacknowledged_PropulsionSystemFault;
+
+
+
+#define     SETBIT(i, n)   ((i) |= (1L << (n)))
+#define     GETBIT(i, n)   ( ((i) & (1L << (n))) >> (n) )
+#define     CLRBIT(i, n)   ((i) &= ~(1L << (n)))
+#define     TOGGLEBIT(i, n)    ((i) ^= (1L << (n)))
+
+// Vector function to decode CAN faults
+void decode_VCI_CAN_Fault();
+void setFaultFlag(int status, int* flt);
+
+// Fault state for the faults.
+enum { STATE0, STATE1, STATE2, STATE3 };
 #endif // __VCINC_H__
 
 

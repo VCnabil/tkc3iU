@@ -67,3 +67,69 @@ extern FAULTS_DB m_FAULTS_DB[] = {
 	{ CFE, 0, false, "Calibration Fault" },
 	{ GAL, 0, false, "General Alarm" }
 };
+
+int No_or_Bad_Data = 0;
+int No_or_Bad_CAN_Data = 0;
+int No_or_Bad_CAN_Data_CentralAlarmSys = 0;
+int CCIM_Fault = 0;
+int CCIM_Fault_Counter = 0;
+
+//for RS232-CAN message prioritizing over CCIM CAN messages.
+int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
+int PORTTAB_rs232counter, STBDTAB_rs232counter;
+
+
+//for indicator calibration
+//unsigned int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN; <--declared in can.c
+int CAL_FLAG;
+int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP; //for calibration abort
+int SB_MAX_TEMP, SB_MIN_TEMP, SN_MAX_TEMP, SN_MIN_TEMP; //for calibration abort
+int PT_MAX_TEMP, PT_MIN_TEMP, ST_MAX_TEMP, ST_MIN_TEMP; //for calibration abort
+int PB_NEUTRAL_THRUST_TEMP, SB_NEUTRAL_THRUST_TEMP;
+
+// Extern declarations for Alarm Flags (assuming they are defined elsewhere)
+  int AlarmMuteFlag;
+  int uiUnacknowledged_PropulsionSystemFault;
+
+
+
+  //******************************************************************************
+  //|                            FAULT DECODING                                  |
+  //******************************************************************************
+
+  void setFaultFlag(int status, int* flt)
+  {
+	  //if (status) // status 1
+	  //{
+		 // if (*flt < STATE2)
+		 // {
+			//  *flt = STATE3;
+			//  VCI_soundSiren = 1; // a global flag indicating a new alarm has come , needed to sound siren
+		 // }
+	  //}
+
+	  //else   // status 0
+	  //{
+		 // if (*flt > STATE1)
+		 // {
+			//  *flt = STATE1;
+		 // }
+	  //}
+  }
+
+
+
+  void decode_VCI_CAN_Fault()
+  {
+
+	  setFaultFlag(GETBIT(RCV_CANFault, 0), &VCI_CAN_Fault);
+	  setFaultFlag(GETBIT(RCV_CANFault, 1), &ClutchST1_CAN_Fault);
+	  setFaultFlag(GETBIT(RCV_CANFault, 2), &ClutchST2_CAN_Fault);
+
+  }
+
+
+  int RCV_CANFault = 0;
+  int VCI_CAN_Fault = 0;
+  int ClutchST1_CAN_Fault = 0;
+  int ClutchST2_CAN_Fault = 0;

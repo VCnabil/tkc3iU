@@ -261,6 +261,17 @@ BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T 
 	uint8_t nmeaInstanceOrSequenceID = 255;
 	return _Database_Set_Individual(DataBaseIndex, engineIndex, pData, DataType, DBSource, canPort, sourceAddress, nmeaInstanceOrSequenceID);
 }
+bool Database_Get_CurrentValue(DATABASEINDEX_T dbIndex, uint32_t* pValue)
+{
+	DBELEMENT_T DBElement;
+	if (DataBase_Get(&DBElement, dbIndex, 0))
+	{
+		*pValue = DBElement.Data.ui;
+		return TRUE;
+	}
+	return FALSE;
+}
+
 BOOL Database_Set_Conditional(
 	int dbIndex,
 	const DBVAR_T* pData,
@@ -489,4 +500,49 @@ static void _DataBase_ValidateDBINFO(void)
 			assert(FALSE);
 		}
 	}
+}
+//------------------------------------------------------------------------------
+/**
+ *  FUNCTION : Database_TimerRefresh
+ *  DESCRIPTION : Checks if the timer for a specific database index and engine number has expired.
+ *                If expired, resets the timer to TimerDefault and returns true.
+ *                Otherwise, returns false.
+ *  PARAMETERS :
+ *      DATABASEINDEX_T dbIndex - The database index to check.
+ *      unsigned char engineNum - The engine number (instance index).
+ *      DBSOURCE_T source       - The data source (e.g., RS232).
+ *  RETURNS    : bool - true if the timer has expired and data should be processed; false otherwise.
+ */
+ //------------------------------------------------------------------------------
+
+bool Database_TimerRefresh(DATABASEINDEX_T dbIndex, unsigned char engineNum, DBSOURCE_T source)
+{
+	bool ready = false;
+
+	// Validate engine number
+	if (engineNum >= DB_INSTANCE_INVALID)
+	{
+		// Invalid engine number
+		SetDebugMessage("Database_TimerRefresh: Invalid engine number %u for dbIndex %d", engineNum, dbIndex);
+		return false;
+	}
+
+	// Lock the mutex to ensure thread safety
+	MutexLock(&m_mutexHandle);
+
+	// Access the specific database element
+	DBELEMENT_T* pElement = &m_DBElements[dbIndex][engineNum];
+
+	// Check if the timer has expired
+	if (pElement->Timer == 0)
+	{
+		// Reset the timer to its default value
+		pElement->Timer = pElement->TimerDefault;
+		ready = true;
+	}
+
+	// Unlock the mutex
+	MutexUnlock(&m_mutexHandle);
+
+	return ready;
 }
