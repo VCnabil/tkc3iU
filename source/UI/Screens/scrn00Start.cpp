@@ -4,10 +4,11 @@
 //  DESCRIPTION :    Implementation of scrnStart00 screen
 //------------------------------------------------------------------------------
 #include "scrn00Start.h"
+#include "project.h"
 #include "UI/screens.h"
 #include <iostream>
 #include <string>
-#include "VCInc.h"
+#include "VCInc.h" 
  
 //------------------------------------------------------------------------------
 // Global variables for background color
@@ -50,35 +51,37 @@ void Scrn00StartCreate(void)
 	ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
 
 }
-
 void Scrn00StartUpdate(void)
 {
-    // Clear the screen background
+    // Clear the screen
     vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
 
-    // 1) Show PVCI calls
-    int localPVCICount = gPVCICallCount;
-    if (localPVCICount > 10000)localPVCICount = 0;
-    char pvcimsg[32];
-    sprintf(pvcimsg, "PVCI calls: %d", localPVCICount);
-    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20,
-        HORIZONTAL_ALIGNMENT_CENTRE,
-        VERTICAL_ALIGNMENT_TOP, 0);
-    SimpleTextDraw(lcd_get_width() / 2, 25, pvcimsg, BLACK, 100, LAYER_FRONT);
+    // Display Station and Communication Mode String
+    const char* info = GetStationAndComModeString();
+    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 10, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
+    SimpleTextDraw(lcd_get_width() / 2, 10, info, BLACK, 100, LAYER_FRONT);
 
-    // 2) Show J1939 calls
-    int localJ1939Count = gJ1939CallCount;
-    if (localJ1939Count > 10000)localJ1939Count = 0;    
-    char j1939msg[32];
-    sprintf(j1939msg, "J1939 calls: %d", localJ1939Count);
-    // Draw it slightly lower on the screen
-    SimpleTextDraw(lcd_get_width() / 2, 50, j1939msg, BLACK, 100, LAYER_FRONT);
+    // Check if Port Nozzle is stale
+    BOOL isDbStale = IsPortNozzleStale();
 
-    // 3) Optionally show any debug message
-    SimpleTextDraw(lcd_get_width() / 2, 75, gDebugMsg, BLACK, 100, LAYER_FRONT);
-	 
- 
+    // Display the staleness status on the screen
+    char staleStatus[64];
+    snprintf(staleStatus, sizeof(staleStatus), "Port Nozzle Stale: %s", isDbStale ? "YES" : "NO");
+    SimpleTextDraw(lcd_get_width() / 2, 75, staleStatus, BLACK, 100, LAYER_FRONT);
+
+    // Display the last debug message
+    SimpleTextDraw(lcd_get_width() / 2, 90, gDebugMsg, BLACK, 100, LAYER_FRONT);
+
+    // Take action if stale
+    if (isDbStale)
+    {
+        SimpleTextDraw(lcd_get_width() / 2, 105, "Warning: Port Nozzle is stale!", RED, 100, LAYER_FRONT);
+    }
+
 }
+
+
+
 
 void Scrn00StartExit(void)
 {//
@@ -120,3 +123,4 @@ static void _Key5Release(void* userData)
     // Add actions for Key 5 release
 	
 }
+

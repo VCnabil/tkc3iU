@@ -1,4 +1,5 @@
 #include "project.h"
+#include "VCinc.h"
 /*
 void vDECODE_PGN_FF50_VECTOR_ALARM( unsigned char ucEngineNum, struct buffer_object *rx_tail )
 {
@@ -55,12 +56,34 @@ void J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 	if (pMsg->msg_length < 3)
 	{
 	SetDebugMessage("FF50 VECTOR_ALARM_ACKNOWLEDGE: Not enough data. Bytes received: %u", pMsg->msg_length);
-	return;
+//	return;
 	}
 	uiByte1 = static_cast<uint32_t>(pMsg->msg_content[1]);
 	uiByte2 = static_cast<uint32_t>(pMsg->msg_content[2]);
 	uiByte3 = static_cast<uint32_t>(pMsg->msg_content[3]);
 
+	// Alarms
+	setFaultFlag(GETBIT(uiByte1, 0), &Central_Alarm_01);
+	setFaultFlag(GETBIT(uiByte1, 1), &Central_Alarm_02);
+	setFaultFlag(GETBIT(uiByte1, 2), &Central_Alarm_03);
+	setFaultFlag(GETBIT(uiByte1, 3), &Central_Alarm_04);
+	setFaultFlag(GETBIT(uiByte1, 4), &Central_Alarm_05);
+	setFaultFlag(GETBIT(uiByte1, 5), &Central_Alarm_06);
+	setFaultFlag(GETBIT(uiByte1, 6), &Central_Alarm_07);
+	setFaultFlag(GETBIT(uiByte1, 7), &Central_Alarm_08);
+
+	setFaultFlag(GETBIT(uiByte2, 0), &Central_Alarm_09);
+	setFaultFlag(GETBIT(uiByte2, 1), &Central_Alarm_10);
+	setFaultFlag(GETBIT(uiByte2, 2), &Central_Alarm_11);
+	setFaultFlag(GETBIT(uiByte2, 3), &Central_Alarm_12);
+	setFaultFlag(GETBIT(uiByte2, 4), &Central_Alarm_13);
+	setFaultFlag(GETBIT(uiByte2, 5), &Central_Alarm_14);
+	setFaultFlag(GETBIT(uiByte2, 6), &Central_Alarm_15);
+	setFaultFlag(GETBIT(uiByte2, 7), &Central_Alarm_16);
+
+	setFaultFlag(GETBIT(uiByte3, 0), &Central_Alarm_17);
+
+	/*
 	bool alarm01 = GETBIT(uiByte1, 0);
 	bool alarm02 = GETBIT(uiByte1, 1);
 	bool alarm03 = GETBIT(uiByte1, 2);
@@ -92,4 +115,5 @@ void J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 	bool alarm09Current = 0;
 	bool alarm10Current = 0;
 	bool alarm11Current = 0;
+	*/
 }

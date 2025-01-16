@@ -1,26 +1,5 @@
 #include "project.h"
-/*
-void vDECODE_PGN_FF0F_VECTOR_RS232_PORTNOZ( unsigned char ucEngineNum, struct buffer_object *rx_tail )
-{
-	UInt16 uiData = 0;
-	No_or_Bad_CAN_Data = 0;  //reset Can data link fault timeout
-
-	PORTNOZ_rs232counter = 10; //reset counter (rs232->CAN xmissions supercede CCIM xmissions)
-	//extract data (it's two bytes of data because the scale is 0 to 1000)
-	uiData = ( ( ( UInt16 )( rx_tail->data[DBYTE2] ) << 8 ) | ( UInt16 )( rx_tail->data[DBYTE1] & 0x00ff ) );
-
-	//store it in the data-bizzle fo shizzle
-	if ( ucDbTimerRefresh( db_VECTOR_port_nozzle, ucEngineNum, SPECIAL_J1939 ) )
-	{
-		data_base[db_VECTOR_port_nozzle][0].data.flt = ( float )uiData;
-		TIMER_network = TIMER_NETWORK_PRESET;
-
-	}
-
-}
-
-
-*/
+ 
  
 void J1939_FF0F_VECTOR_RS232_PORTNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 {
@@ -34,10 +13,9 @@ void J1939_FF0F_VECTOR_RS232_PORTNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 		return;
 	}
 
-    uint32_t uiData = (static_cast<uint32_t>(pMsg->msg_content[2]) << 8) |
-				   (static_cast<uint32_t>(pMsg->msg_content[1]) & 0x00FF);
+    uint32_t uiData = (static_cast<uint32_t>(pMsg->msg_content[1]) << 8) | (static_cast<uint32_t>(pMsg->msg_content[0]) & 0x00FF);
 
-    uint32_t currentValue = 0.0f;
+    uint32_t currentValue = 0;
 	bool hasCurrent = Database_Get_CurrentValue(db_VECTOR_port_nozzle, &currentValue);
 
 	DBVAR_T dbValue;
@@ -52,12 +30,12 @@ void J1939_FF0F_VECTOR_RS232_PORTNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 
 	if (updateSuccess)
 	{
-		if (hasCurrent && (dbValue.flt != currentValue))
+		if (hasCurrent && (dbValue.ui != currentValue))
 		{
 			AlarmMuteFlag = 0;
 			uiUnacknowledged_PropulsionSystemFault = 1;
 		}
 
-		/*TIMER_network = TIMER_NETWORK_PRESET;*/
+
 	}
 }

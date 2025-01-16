@@ -42,11 +42,11 @@ void J1939_FF10_VECTOR_RS232_STBDNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 		db_VECTOR_stbd_nozzle,
 		&dbValue,
         DBVARTYPE_UNSIGNED_INT,
-		DBSOURCE_NMEA0183
+		DBSOURCE_CAN
 	);
     if (updateSuccess)
 	{
-		if (hascurrent && (dbValue.flt != currentValue))
+		if (hascurrent && (dbValue.ui != currentValue))
 		{
 			AlarmMuteFlag = 0;
 			uiUnacknowledged_PropulsionSystemFault = 1;

@@ -93,6 +93,7 @@ void DataBase_Init(void)
 	_DataBase_ValidateDBINFO();
 	
 	_Database_InitValues();
+	void* userData = (void*)m_DBElements;
 
 	// Register with the Timer System for the timer process callback
 	m_timerFunctionLastUptime = get_uptime_milliseconds();
@@ -261,58 +262,45 @@ BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T 
 	uint8_t nmeaInstanceOrSequenceID = 255;
 	return _Database_Set_Individual(DataBaseIndex, engineIndex, pData, DataType, DBSource, canPort, sourceAddress, nmeaInstanceOrSequenceID);
 }
-bool Database_Get_CurrentValue(DATABASEINDEX_T dbIndex, uint32_t* pValue)
-{
-	DBELEMENT_T DBElement;
-	if (DataBase_Get(&DBElement, dbIndex, 0))
-	{
-		*pValue = DBElement.Data.ui;
-		return TRUE;
-	}
-	return FALSE;
-}
 
-BOOL Database_Set_Conditional(
-	int dbIndex,
-	const DBVAR_T* pData,
-	DBVARTYPE_T dataType,
-	DBSOURCE_T source
-)
+
+
+BOOL Database_Set_Conditional(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataType,DBSOURCE_T source)
 {
-	// 1) Decide if we allow writing based on current data mode:
-	if (source == DBSOURCE_CAN)
+	if (pData == NULL || dbIndex < 0 || dbIndex >= DATABASEINDEX_MAX)
 	{
-		// If not in CANbus or GPSI mode, skip
-		if (SettingsGetDataMode() != CANbus_mode &&
-			SettingsGetDataMode() != CANbus_GPSI_mode)
+		return FALSE; // Invalid input
+	}
+
+	if (source == DBSOURCE_CAN || source == DBSOURCE_GPSI)
+	{
+		if (SettingsGetDataMode() != CANbus_mode && SettingsGetDataMode() != CANbus_GPSI_mode)
 		{
 			return FALSE; // do nothing
 		}
 	}
 	else if (source == DBSOURCE_NMEA0183)
 	{
-		// If not in RS232 mode, skip
 		if (SettingsGetDataMode() != rs232_mode)
 		{
 			return FALSE; // do nothing
 		}
 	}
-
-	// 2) If we get here, the source is currently allowed
-	//    We'll just pass some "dummy" arguments for canPort or addresses,
-	//    because for NMEA or local sources we might not care.
-	BOOL bRet = _Database_Set(
-		dbIndex,
-		pData,
-		dataType,
-		source,
-		(CAN_PORTS_T)0, // canPort dummy
-		255,            // sourceAddress dummy
-		255             // nmeaInstanceOrSequenceID dummy
+	// Perform the database update
+	BOOL bRet = _Database_Set(dbIndex,pData,dataType,source,
+		(CAN_PORTS_T)0, // dummy canPort
+		255,            // dummy sourceAddress
+		255             // dummy nmeaInstanceOrSequenceID
 	);
+
+
 
 	return bRet;
 }
+
+
+
+
 float DataBase_GetDataFromElementAsFloat(DBELEMENT_T* Element)
 {
 	float ReturnValue = 0.0f;
@@ -501,48 +489,34 @@ static void _DataBase_ValidateDBINFO(void)
 		}
 	}
 }
-//------------------------------------------------------------------------------
-/**
- *  FUNCTION : Database_TimerRefresh
- *  DESCRIPTION : Checks if the timer for a specific database index and engine number has expired.
- *                If expired, resets the timer to TimerDefault and returns true.
- *                Otherwise, returns false.
- *  PARAMETERS :
- *      DATABASEINDEX_T dbIndex - The database index to check.
- *      unsigned char engineNum - The engine number (instance index).
- *      DBSOURCE_T source       - The data source (e.g., RS232).
- *  RETURNS    : bool - true if the timer has expired and data should be processed; false otherwise.
- */
- //------------------------------------------------------------------------------
-
-bool Database_TimerRefresh(DATABASEINDEX_T dbIndex, unsigned char engineNum, DBSOURCE_T source)
+ 
+bool Database_Get_CurrentValue(DATABASEINDEX_T dbIndex, uint32_t* pValue)
 {
-	bool ready = false;
-
-	// Validate engine number
-	if (engineNum >= DB_INSTANCE_INVALID)
+	DBELEMENT_T DBElement;
+	if (DataBase_Get(&DBElement, dbIndex, 0))
 	{
-		// Invalid engine number
-		SetDebugMessage("Database_TimerRefresh: Invalid engine number %u for dbIndex %d", engineNum, dbIndex);
-		return false;
+		*pValue = DBElement.Data.ui;
+		return TRUE;
 	}
-
-	// Lock the mutex to ensure thread safety
-	MutexLock(&m_mutexHandle);
-
-	// Access the specific database element
-	DBELEMENT_T* pElement = &m_DBElements[dbIndex][engineNum];
-
-	// Check if the timer has expired
-	if (pElement->Timer == 0)
-	{
-		// Reset the timer to its default value
-		pElement->Timer = pElement->TimerDefault;
-		ready = true;
-	}
-
-	// Unlock the mutex
-	MutexUnlock(&m_mutexHandle);
-
-	return ready;
+	return FALSE;
 }
+
+
+
+BOOL IsPortNozzleStale(void)
+{
+	BOOL isStale = FALSE;
+	MutexLock(&m_mutexHandle);
+	{
+		DBELEMENT_T* pElement = &m_DBElements[db_VECTOR_port_nozzle][0];
+		if (pElement->Timer == 0 && pElement->OwnerSource == DBSOURCE_NONE)
+		{
+			isStale = TRUE;
+		}
+		SetDebugMessage("IsPortNozzleStale: Timer=%u, OwnerSource=%d, Stale=%s",pElement->Timer, pElement->OwnerSource, isStale ? "YES" : "NO");
+
+	}
+	MutexUnlock(&m_mutexHandle);
+	return isStale;
+}
+

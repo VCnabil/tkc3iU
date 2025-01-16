@@ -37,6 +37,11 @@
 
 #define NMEA_HEADER "$PVCC"      //NMEA header for serial xmission
 
+#define FAULT_DESCRIPTION_MAX_LENGTH 50
+
+#define DEBUG_LOG_MAX_MESSAGES 10
+#define DEBUG_MSG_MAX_LENGTH 256
+
 extern int Intsteer_Enable;
 //Enable_RS232_Transmission is set from reading the i15 from serial received line . if it is 1 , Enable_RS232_Transmission = 0; if it is 0, Enable_RS232_Transmission = 1 that s if we are the main statoin
 extern int Enable_RS232_Transmission;
@@ -63,7 +68,7 @@ extern std::vector<std::string> dbElementStrings;
 extern int gPVCICallCount;        // Just the declaration
 extern int gJ1939CallCount;   // Declaration of J1939 call count
 extern MUTEXHANDLE_T gPVCICountMutex;
-#define DEBUG_MSG_MAX_LENGTH 256
+ 
 
 // Global debug buffer
 extern char gDebugMsg[DEBUG_MSG_MAX_LENGTH];
@@ -73,7 +78,8 @@ void SetDebugMessage(const char* format, ...);
 
 
 
-#define FAULT_DESCRIPTION_MAX_LENGTH 50
+void AddDebugMessage(const char* format, ...);
+const char* GetDebugLogMessage(int index);
 
 typedef enum
 {
@@ -96,7 +102,6 @@ typedef struct
 
 extern FAULTS_DB m_FAULTS_DB[];
 
-
 //These are assigned values based on the fault codes (recieved via RS232)
 extern int PTab_sigFault, STab_sigFault, PNoz_sigFault, SNoz_sigFault, PBkt_sigFault, SBkt_sigFault;
 extern int PTab_nfuFault, STab_nfuFault, PNoz_nfuFault, SNoz_nfuFault, PBkt_nfuFault, SBkt_nfuFault;
@@ -107,31 +112,27 @@ extern int Cal_Fault, Roll1_Fault, Trim1_Fault, Inbd_Fault, Otbd_Fault, AP_Fault
 extern int Number_Faults, Number_Faults_PropSys, Number_Faults_CAN, Number_Faults_CentralAlarmSystem;
 extern int RCV_CANFault, VCI_CAN_Fault, ClutchST1_CAN_Fault, ClutchST2_CAN_Fault;
 
-
-
-extern unsigned int Central_Alarm_01, Central_Alarm_02, Central_Alarm_03, Central_Alarm_04, Central_Alarm_05;
-extern unsigned int Central_Alarm_06, Central_Alarm_07, Central_Alarm_08, Central_Alarm_09, Central_Alarm_10;
-extern unsigned int Central_Alarm_11, Central_Alarm_12, Central_Alarm_13, Central_Alarm_14, Central_Alarm_15;
-extern unsigned int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
+extern   int Central_Alarm_01, Central_Alarm_02, Central_Alarm_03, Central_Alarm_04, Central_Alarm_05;
+extern   int Central_Alarm_06, Central_Alarm_07, Central_Alarm_08, Central_Alarm_09, Central_Alarm_10;
+extern   int Central_Alarm_11, Central_Alarm_12, Central_Alarm_13, Central_Alarm_14, Central_Alarm_15;
+extern   int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
 
 extern unsigned int* centralAlarmArray[];
 
 extern int No_or_Bad_Data, No_or_Bad_CAN_Data, No_or_Bad_CAN_Data_CentralAlarmSys, CCIM_Fault, CCIM_Fault_Counter;
 extern int Serial_Fault, CAN_Fault, ControlSystem_Fault, Faults_on_Screen, MS_CAN_Fault, CentralAlarmSys_Fault, CentralAlarmSys_CAN_Fault;
-
 extern int InMainScreen, InFaultScreen, AlarmMuteFlag, AlarmMuteFlag_CentralAlarm, StaticAlarmDisplayed, clearonce;
 extern int SCFaultCount, CSFaultCount, CANFaultCount;
 extern unsigned int uiUnacknowledged_PropulsionSystemFault;
 extern unsigned int vci_status, autopilot, dk_tr_mode;  // these variables are used to display the status text on the screen
-
+  
 
 //allows wing stations to read the rs232->can data instead of the CCIM can data.
 extern int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
 extern int PORTTAB_rs232counter, STBDTAB_rs232counter;
 
-
 //for calibration
-extern unsigned int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
+extern int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
 extern int CAL_FLAG;
 
 extern int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP;
@@ -139,13 +140,7 @@ extern int SB_MAX_TEMP, SB_MIN_TEMP, SN_MAX_TEMP, SN_MIN_TEMP;
 extern int PT_MAX_TEMP, PT_MIN_TEMP, ST_MAX_TEMP, ST_MIN_TEMP;
 extern int PB_NEUTRAL_THRUST_TEMP, SB_NEUTRAL_THRUST_TEMP;
 
-
-
-// Extern declarations for Alarm Flags (assuming they are defined elsewhere)
-extern int AlarmMuteFlag;
-extern int uiUnacknowledged_PropulsionSystemFault;
-
-
+extern unsigned int VCI_soundSiren;
 
 #define     SETBIT(i, n)   ((i) |= (1L << (n)))
 #define     GETBIT(i, n)   ( ((i) & (1L << (n))) >> (n) )
@@ -153,8 +148,13 @@ extern int uiUnacknowledged_PropulsionSystemFault;
 #define     TOGGLEBIT(i, n)    ((i) ^= (1L << (n)))
 
 // Vector function to decode CAN faults
+  //******************************************************************************
+  //|                            FAULT DECODING                                  |
+  //******************************************************************************
 void decode_VCI_CAN_Fault();
 void setFaultFlag(int status, int* flt);
+
+const char* GetStationAndComModeString(void);
 
 // Fault state for the faults.
 enum { STATE0, STATE1, STATE2, STATE3 };

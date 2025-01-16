@@ -49,45 +49,9 @@ void J1939_FF16_VECTOR_RS232_NFUFAULT(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
     // Extract engine number from canPort
     unsigned char ucEngineNum = static_cast<unsigned char>(canPort);// ExtractEngineNum(canPort);
 
-    // Define or retrieve SPECIAL_J1939 as per your system's requirements
-    const int SPECIAL_J1939 = 0; // Placeholder value; replace with actual if needed
+     
 
-    // Check if the timer allows processing the data
-    if (Database_TimerRefresh(db_VECTOR_nfu_fault_error, ucEngineNum, DBSOURCE_NMEA0183))
-    {
-        // Retrieve current value from the database for comparison
-        uint32_t currentValue = 0;
-        bool hasCurrent = Database_Get_CurrentValue(db_VECTOR_nfu_fault_error, &currentValue);
-
-        // Compare the new data with the current database value
-        if (hasCurrent && (iData != static_cast<uint32_t>(currentValue)))
-        {
-            // Trigger alarms if there's a change in data
-            AlarmMuteFlag = 0;
-            uiUnacknowledged_PropulsionSystemFault = 1; // Flag bit sent to Indication/Alarm controller
-        }
-
-        // Prepare the new database value
-        DBVAR_T dbValue;
-        dbValue.ui = static_cast<uint32_t>(iData); // Assuming the database stores float values
-
-        // Update the database conditionally
-        bool updateSuccess = Database_Set_Conditional(
-            db_VECTOR_nfu_fault_error,   // Database index for NFU Fault
-            &dbValue,
-            DBVARTYPE_FLOAT,             // Data type (float)
-            DBSOURCE_NMEA0183               // Source identifier (RS232)
-        );
-
-        if (updateSuccess)
-        {
-            // Update the network timer to indicate fresh data reception
-          //  TIMER_network = TIMER_NETWORK_PRESET;
-        }
-
-        // Optional Debug Message
-        // SetDebugMessage("FF16 RS232_NFUFAULT: data=%d => stored=%f", iData, dbValue.flt);
-    }
+   
    
  
 }

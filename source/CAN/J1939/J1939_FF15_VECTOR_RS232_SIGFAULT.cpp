@@ -43,11 +43,11 @@ void J1939_FF15_VECTOR_RS232_SIGFAULT(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 		db_VECTOR_signal_fault_error,
 		&dbValue,
 		DBVARTYPE_UNSIGNED_INT,
-		DBSOURCE_NMEA0183
+		DBSOURCE_CAN
 	);
 	if (updateSuccess)
 	{
-		if (hascurrent && (dbValue.flt != currentValue))
+		if (hascurrent && (dbValue.ui != currentValue))
 		{
 			AlarmMuteFlag = 0;
 			uiUnacknowledged_PropulsionSystemFault = 1;

@@ -27,6 +27,7 @@ typedef enum
 	DBSOURCE_LOCAL,
 	DBSOURCE_CAN,
     DBSOURCE_NMEA0183,
+	DBSOURCE_GPSI,
 	//////////////////////////////////////////////////////////////////////////
 	// Used for checking is "Valid" so must be LAST!
 	DBSOURCE_INVALID,
@@ -132,11 +133,11 @@ typedef struct
 }  DBELEMENT_T;
 
 void DataBase_Init(void);
+float DataBase_GetDataFromElementAsFloat(DBELEMENT_T* Element);
 BOOL DataBase_IsItemValid(int DataBaseIndex, int InstanceIndex);
 BOOL DataBase_Get(DBELEMENT_T* p_DB_Element, int DataBaseIndex, int InstanceIndex);
 BOOL Database_Set_CAN(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T DataType, CAN_PORTS_T canPort, uint8_t nmeaInstanceOrSequenceID, uint8_t sourceAddress);
 BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T DataType, uint8_t engineIndex);
-bool Database_Get_CurrentValue(DATABASEINDEX_T dbIndex, uint32_t* pValue);
 // --- The new function prototype ---
 BOOL Database_Set_Conditional(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataType,DBSOURCE_T source);
 BOOL Database_GetIndexFromString(const char* String, uint32_t* DBIndex);
@@ -144,7 +145,6 @@ int Database_GetItemDescription(char* destination, size_t destinationSize, int D
 void Database_SetItemDescription(int DataBaseIndex, const char* pDescription, uint32_t descriptionLength);
 DBUNITS_T DatabaseGetUnitType(uint32_t DBIndex);
 // Add the following declaration
-bool Database_TimerRefresh(DATABASEINDEX_T dbIndex, unsigned char engineNum, DBSOURCE_T source);
-
-
+bool Database_Get_CurrentValue(DATABASEINDEX_T dbIndex, uint32_t* pValue);
+BOOL IsPortNozzleStale(void);
 #endif	

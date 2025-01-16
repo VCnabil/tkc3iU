@@ -29,6 +29,25 @@ typedef struct
 	// You _MUST_ add any new settings to be saved _AFTER_ this comment...
 	///////////////////////////////////////////////////////////////////////////
  
+
+    //VECTOR EEPROM PARAMETERS..........................................................
+    //all of these are 2 bytes because the A to D has 10-bit resolution (2 bytes).
+    //total = 28 bytes (14 parameters)
+    uint8_t PN_MAX;  //port nozzle max sensor value
+    uint8_t PN_MIN;  //port nozzle min sensor value
+    uint8_t SN_MAX;  //stbd nozzle max sensor value
+    uint8_t SN_MIN;  //stbd nozzle min sensor value
+    uint8_t PB_MAX;  //port bucket max sensor value
+    uint8_t PB_MIN;  //port bucket min sensor value
+    uint8_t SB_MAX;  //stbd bucket max sensor value
+    uint8_t SB_MIN;  //stbd bucket min sensor value
+    uint8_t PT_MAX;  //port trimtab max sensor value
+    uint8_t PT_MIN;  //port trimtab min sensor value
+    uint8_t ST_MAX;  //stbd trimtab max sensor value
+    uint8_t ST_MIN;  //stbd trimtab min sensor value
+    uint8_t PB_NEUTRAL_THRUST;  //port bucket neutral thrust value
+    uint8_t SB_NEUTRAL_THRUST;  //stbd bucket neutral thrust value
+
 	//these parameters are for storing the display configuration. 
 	// Station: main_station or wing_station
 	uint8_t  STATION_TYPE;
@@ -151,6 +170,206 @@ void SettingsToggleBleep(void)
 }
 
 #pragma region DispayConfigValues
+// setter and getters for VECTOR EEPROM PARAMETERS.......................................................... 
+uint8_t SettingsGetPN_MAX(void)
+{
+	return m_settings.PN_MAX;
+}
+
+void SettingsSetPN_MAX(uint8_t value)
+{
+	if (m_settings.PN_MAX != value)
+	{
+		m_settings.PN_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPN_MIN(void)
+{
+	return m_settings.PN_MIN;
+}
+
+void SettingsSetPN_MIN(uint8_t value)
+{
+	if (m_settings.PN_MIN != value)
+	{
+		m_settings.PN_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetSN_MAX(void)
+{
+	return m_settings.SN_MAX;
+}
+
+void SettingsSetSN_MAX(uint8_t value)
+{
+	if (m_settings.SN_MAX != value)
+	{
+		m_settings.SN_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetSN_MIN(void)
+{
+	return m_settings.SN_MIN;
+}
+
+void SettingsSetSN_MIN(uint8_t value)
+{
+	if (m_settings.SN_MIN != value)
+	{
+		m_settings.SN_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPB_MAX(void)
+{
+	return m_settings.PB_MAX;
+}
+
+void SettingsSetPB_MAX(uint8_t value)
+{
+	if (m_settings.PB_MAX != value)
+	{
+		m_settings.PB_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPB_MIN(void)
+{
+	return m_settings.PB_MIN;
+}
+
+void SettingsSetPB_MIN(uint8_t value)
+{
+	if (m_settings.PB_MIN != value)
+	{
+		m_settings.PB_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetSB_MAX(void)
+{
+	return m_settings.SB_MAX;
+}
+
+void SettingsSetSB_MAX(uint8_t value)
+{
+	if (m_settings.SB_MAX != value)
+	{
+		m_settings.SB_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetSB_MIN(void)
+{
+	return m_settings.SB_MIN;
+}
+
+void SettingsSetSB_MIN(uint8_t value)
+{
+	if (m_settings.SB_MIN != value)
+	{
+		m_settings.SB_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPT_MAX(void)
+{
+	return m_settings.PT_MAX;
+}
+
+void SettingsSetPT_MAX(uint8_t value)
+{
+	if (m_settings.PT_MAX != value)
+	{
+		m_settings.PT_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPT_MIN(void)
+{
+	return m_settings.PT_MIN;
+}
+
+void SettingsSetPT_MIN(uint8_t value)
+{
+	if (m_settings.PT_MIN != value)
+	{
+		m_settings.PT_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetST_MAX(void)
+{
+	return m_settings.ST_MAX;
+}
+
+void SettingsSetST_MAX(uint8_t value)
+{
+	if (m_settings.ST_MAX != value)
+	{
+		m_settings.ST_MAX = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetST_MIN(void)
+{
+	return m_settings.ST_MIN;
+}
+
+void SettingsSetST_MIN(uint8_t value)
+{
+	if (m_settings.ST_MIN != value)
+	{
+		m_settings.ST_MIN = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetPB_NEUTRAL_THRUST(void)
+{
+	return m_settings.PB_NEUTRAL_THRUST;
+}
+
+void SettingsSetPB_NEUTRAL_THRUST(uint8_t value)
+{
+	if (m_settings.PB_NEUTRAL_THRUST != value)
+	{
+		m_settings.PB_NEUTRAL_THRUST = value;
+		SettingsSave();
+	}
+}
+
+uint8_t SettingsGetSB_NEUTRAL_THRUST(void)
+{
+	return m_settings.SB_NEUTRAL_THRUST;
+}
+
+void SettingsSetSB_NEUTRAL_THRUST(uint8_t value)
+{
+	if (m_settings.SB_NEUTRAL_THRUST != value)
+	{
+		m_settings.SB_NEUTRAL_THRUST = value;
+		SettingsSave();
+	}
+}
+
+
+
+
 
 // -----------------------
 // Station Type
@@ -473,5 +692,22 @@ static void _SettingsLoadDefaults(void)
 
     // INSTEER
     m_settings.INTSTEER = 1; // 1 = ON, 0 = OFF
+
+
+	m_settings.PN_MAX = 500;
+	m_settings.PN_MIN = 0;
+	m_settings.SN_MAX = 500;
+	m_settings.SN_MIN = 0;
+	m_settings.PB_MAX = 500;
+	m_settings.PB_MIN = 0;
+	m_settings.SB_MAX = 500;
+	m_settings.SB_MIN = 0;
+	m_settings.PT_MAX = 500;
+	m_settings.PT_MIN = 0;
+	m_settings.ST_MAX = 500;
+	m_settings.ST_MIN = 0;
+	m_settings.PB_NEUTRAL_THRUST = 10;
+	m_settings.SB_NEUTRAL_THRUST = 10;
   
 }
+ 

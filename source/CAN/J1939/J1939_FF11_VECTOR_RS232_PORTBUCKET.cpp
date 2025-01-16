@@ -46,11 +46,11 @@ void J1939_FF11_VECTOR_RS232_PORTBUCKET(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 	db_VECTOR_port_bucket,
 	&dbValue,
 	DBVARTYPE_UNSIGNED_INT,
-	DBSOURCE_NMEA0183
+	  DBSOURCE_CAN
   );
   if (updateSuccess)
   {
-	if (hascurrent && (dbValue.flt != currentValue))
+	if (hascurrent && (dbValue.ui != currentValue))
 	{
 	  AlarmMuteFlag = 0;
 	  uiUnacknowledged_PropulsionSystemFault = 1;
