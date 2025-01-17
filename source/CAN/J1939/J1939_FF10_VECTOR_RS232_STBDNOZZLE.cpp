@@ -42,7 +42,7 @@ void J1939_FF10_VECTOR_RS232_STBDNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 		db_VECTOR_stbd_nozzle,
 		&dbValue,
         DBVARTYPE_UNSIGNED_INT,
-		DBSOURCE_CAN
+		DBSOURCE_GPSI
 	);
     if (updateSuccess)
 	{

@@ -135,7 +135,8 @@ int PORTTAB_rs232counter, STBDTAB_rs232counter;
 
 
 //for indicator calibration int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN;// <--declared in can.c
-int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN;
+
+int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
 int CAL_FLAG=0;
 int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP; //for calibration abort
 int SB_MAX_TEMP, SB_MIN_TEMP, SN_MAX_TEMP, SN_MIN_TEMP; //for calibration abort

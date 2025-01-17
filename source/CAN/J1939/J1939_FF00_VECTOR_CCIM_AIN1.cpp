@@ -1,24 +1,18 @@
 #include "project.h"
  
- 
-//static const uint32_t pn_min = 0;
-//static const uint32_t pn_max = 450;  // or 1023, depending on your actual A/D range
 
 void J1939_FF00_VECTOR_CCIM_AIN1(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
-{
-   // gJ1939CallCount++;
-     
+{     
     if (pMsg->msg_length < 2) {
-       // SetDebugMessage ("FF00 CCIM_AIN1: Not enough data. Bytes received: %u", pMsg->msg_length);
+       // SetDebugMessage ("FF00 CCIM_AIN1: less than 2bytes: %u", pMsg->msg_length);
         return;
     }
  
     uint32_t uiData = 0;
     int iData = 0;
 
-    CCIM_Fault_Counter = 0;          // Reset CCIM fault timeout
+    CCIM_Fault_Counter = 0; 
     PORTNOZ_rs232counter -= 1;
-
     if (PORTNOZ_rs232counter < 0 && CCIM_Fault == 0)
     {
         PORTNOZ_rs232counter = 0;

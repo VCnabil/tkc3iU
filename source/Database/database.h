@@ -24,10 +24,10 @@ typedef enum
 typedef enum
 {
 	DBSOURCE_NONE = 0,
+	DBSOURCE_NMEA0183,		//matches rs232_mode   1  defined in VCInc.h
+	DBSOURCE_CAN,			//matches CANbus_mode  2  defined in VCInc.h
+	DBSOURCE_GPSI,			//matches CANbus_GPSI_mode  3  defined in VCInc.h
 	DBSOURCE_LOCAL,
-	DBSOURCE_CAN,
-    DBSOURCE_NMEA0183,
-	DBSOURCE_GPSI,
 	//////////////////////////////////////////////////////////////////////////
 	// Used for checking is "Valid" so must be LAST!
 	DBSOURCE_INVALID,
