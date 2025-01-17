@@ -23,6 +23,7 @@ source/UI/screens.cpp
 source/UI/ttfonts.cpp
 source/UI/buttonbar.cpp
 source/UI/keyboard.cpp
+source/UI/graphs.cpp
 source/data.cpp
 source/main.cpp
 source/VCIncShared.cpp 
@@ -67,4 +68,7 @@ source/CAN/J1939/J1939_FF1A_VECTOR_RS232_CALFAULT.cpp
 source/CAN/J1939/J1939_FF1B_VECTOR_RS232_INTERLOCKFAULT.cpp
 source/CAN/J1939/J1939_FF51_VECTOR_ALARM_ACKNOWLEDGE.cpp
 source/CAN/J1939/J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE.cpp
+source/UI/Screens/Scrn00Indicatons.cpp
+source/UI/Screens/Scrn01Indicatons.cpp
+source/UI/Screens/Scrn02Indicatons.cpp
 )

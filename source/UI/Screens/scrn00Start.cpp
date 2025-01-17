@@ -47,7 +47,8 @@ void Scrn00StartCreate(void)
 	ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "to", "OPTS");
 	ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "live", "DB view");
 	ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "debug", "COM");
-	ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 9, BLACK, "to", "faults");  
+	ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 9, BLACK, "faults", "00");  
+    ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "Indic", "00");
 	ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
 
 }
@@ -115,12 +116,14 @@ static void _Key4Release(void* userData)
   
 	 
   //  MMIScreenGoto(SCREENID_DEBUGCAN);
-    MMIScreenGoto(SCREENID_SCRN01FAULTS);
+    //MMIScreenGoto(SCREENID_SCRN01FAULTS);
+	MMIScreenGoto(SCREENID_FAULTS);
 }
 
 static void _Key5Release(void* userData)
 {
     // Add actions for Key 5 release
+    MMIScreenGoto(SCREENID_SCRN00INDICATONS);
 	
 }
 

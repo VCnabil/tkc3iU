@@ -1,56 +1,47 @@
 #include "project.h"
 
 
-/*
-void vDECODE_PGN_FF16_VECTOR_RS232_NFUFAULT( unsigned char ucEngineNum, struct buffer_object *rx_tail )
-{
-    UInt16 uiData = 0;
-    int iData = 0;
-
-    No_or_Bad_CAN_Data = 0;  //reset Can data link fault timeout
-    //extract data (it's two bytes of data because the A to D in the CCIM is 10-bit)
-    iData = ( int )rx_tail->data[DBYTE1];
-
-    //store it in the data-bizzle fo shizzle
-    if ( ucDbTimerRefresh( db_VECTOR_nfu_fault_error, ucEngineNum, SPECIAL_J1939 ) )
-    {
-        if ( iData != ( int )data_base[db_VECTOR_nfu_fault_error][0].data.flt )
-        {
-            AlarmMuteFlag = 0;
-            uiUnacknowledged_PropulsionSystemFault = 1; // flag bit sent to Indication/Alarm controller
-        }
-
-        data_base[db_VECTOR_nfu_fault_error][0].data.flt = ( float )iData;
-        TIMER_network = TIMER_NETWORK_PRESET;
-    }
-
-}
-*/
 void J1939_FF16_VECTOR_RS232_NFUFAULT(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 {
 
-    // Reset CAN data link fault timeout
-    No_or_Bad_CAN_Data = 0;
+    uint32_t uiData = 0;
+    No_or_Bad_CAN_Data = 0; // Reset CAN data link fault timeout
 
-    // Optional: Reset RS232 counters if necessary
-    // PORTNOZ_rs232counter = 10; // Uncomment if needed based on your prioritization logic
-
-    // Ensure the message has at least 2 bytes
-    if (pMsg->msg_length < 2)
+    // Validate message length
+    if (pMsg->msg_length < 1)
     {
-        SetDebugMessage("FF16 VECTOR_RS232_NFUFAULT: Not enough data. Bytes received: %u", pMsg->msg_length);
+       // SetDebugMessage("FF16 RS232_NFUFAULT: Not enough data. Bytes received: %u", pMsg->msg_length);
         return;
     }
 
-    // Extract data: Assuming DBYTE1 corresponds to msg_content[1]
-    // Adjust indexing based on your actual data structure
-    int iData = static_cast<int>(pMsg->msg_content[1]);
+    // Extract data
+    uiData = static_cast<uint32_t>(pMsg->msg_content[0]);
 
-    // Extract engine number from canPort
-    unsigned char ucEngineNum = static_cast<unsigned char>(canPort);// ExtractEngineNum(canPort);
+    // Retrieve the current value from the database
+    uint32_t currentValue = 0;
+    bool hasCurrent = Database_Get_CurrentValue(db_VECTOR_nfu_fault_error, &currentValue);
 
-     
+    // Prepare database value for update
+    DBVAR_T dbValue;
+    dbValue.ui = uiData; // Use .ui since the data is unsigned
 
+    // Update the database
+    bool updateSuccess = Database_Set_Conditional(
+        db_VECTOR_nfu_fault_error,
+        &dbValue,
+        DBVARTYPE_UNSIGNED_INT,
+        DBSOURCE_CAN
+    );
+
+    // Alarm handling on successful update
+    if (updateSuccess)
+    {
+        if (hasCurrent && (dbValue.ui != currentValue))
+        {
+            AlarmMuteFlag = 0; // Reset mute flag
+            uiUnacknowledged_PropulsionSystemFault = 1; // Set fault flag for alarm controller
+        }
+    }
    
    
  

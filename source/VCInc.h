@@ -8,8 +8,11 @@
 #include "syslib.h"   // or whichever file declares MUTEXHANDLE_T
 #include <vector>
 #include <string>
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
 #define TIMER_NETWORK_PRESET           100   /* wait 10s before displaying LOST CONNECTION   */
 #define NUM_FAULT_ENTRIES 32
+#define FAULTS_PER_PAGE 6
 #define DATABASE_MAX_VECTORVARS 18 //the first 16 variables are Vectors Control inc. variables
 #define MAX_PROPN_FAULTS_DISP     11 // maximum number of faults displayed per screen 
 #define MAX_SYSTEM_PARAMETERS 8  //defines number of system parameters in the system options screen
@@ -153,6 +156,15 @@ extern unsigned int VCI_soundSiren;
   //******************************************************************************
 void decode_VCI_CAN_Fault();
 void setFaultFlag(int status, int* flt);
+
+void Decode_SignalFault(void);
+void Decode_NfuFault(void);
+void Decode_STA1Fault(void);
+void Decode_STA2Fault(void);
+void Decode_STA3Fault(void);
+void Decode_CalFault(void);
+extern unsigned int dockMode_delayCntr;
+void Decode_InterlockFault(void);
 
 const char* GetStationAndComModeString(void);
 

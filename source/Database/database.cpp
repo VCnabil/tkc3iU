@@ -199,6 +199,32 @@ static BOOL _Database_Set_Individual(int databaseRow,
 				MutexUnlock(&m_mutexHandle);
 			}// Thread safe
 
+			//nabil 1-17-2025
+			  // Global flag updates based on the database row
+			switch (databaseRow)
+			{
+				case db_VECTOR_STA1_fault_error:
+					Decode_STA1Fault();
+					break;
+				case db_VECTOR_STA2_fault_error:
+					Decode_STA2Fault();
+					break;
+				case db_VECTOR_STA3_fault_error:
+					Decode_STA3Fault();
+					break;
+				case db_VECTOR_nfu_fault_error:
+					Decode_NfuFault();
+					break;
+				case db_VECTOR_signal_fault_error:
+					Decode_SignalFault();
+					break;
+				case db_VECTOR_cal_fault_error:
+					Decode_CalFault();
+					break;
+					// Add more cases as needed for other fault-related rows
+				default:
+					break;
+			}
 			// Succeeded
 			IsItemLoaded = TRUE;
 		}
@@ -513,7 +539,8 @@ BOOL IsPortNozzleStale(void)
 		{
 			isStale = TRUE;
 		}
-		SetDebugMessage("IsPortNozzleStale: Timer=%u, OwnerSource=%d, Stale=%s",pElement->Timer, pElement->OwnerSource, isStale ? "YES" : "NO");
+		SetDebugMessage("IsPortNozzleStale: Timer=%u, OwnerSource=%d, Stale=%s",
+pElement->Timer, pElement->OwnerSource, isStale ? "YES" : "NO");
 
 	}
 	MutexUnlock(&m_mutexHandle);

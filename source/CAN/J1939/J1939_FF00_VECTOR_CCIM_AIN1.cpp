@@ -48,7 +48,7 @@ void J1939_FF00_VECTOR_CCIM_AIN1(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
         // Store data in the database
         DBVAR_T DBData;
         DBData.ui = (uint32_t)iData;
-        Database_Set_Conditional(db_VECTOR_port_nozzle, &DBData, DBVARTYPE_UNSIGNED_INT, DBSOURCE_CAN);
+        Database_Set_Conditional(db_VECTOR_port_nozzle, &DBData, DBVARTYPE_UNSIGNED_INT, DBSOURCE_GPSI);
        
     }
     

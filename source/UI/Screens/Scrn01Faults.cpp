@@ -40,17 +40,13 @@ static void _CheckNewlyActivatedBits(uint32_t currentMask,
     // Update the previous mask for next time
     *pPrevMask = currentMask;
 }
-static const int FAULTS_PER_PAGE = 6;
+ 
 static void _Key1Release(void* userData);
 static void _Key2Release(void* userData);
 static void _Key3Release(void* userData);
 static void _Key4Release(void* userData);
 static void _Key5Release(void* userData);
-static void _Key1Release(void* userData);
-static void _Key2Release(void* userData);
-static void _Key3Release(void* userData);
-static void _Key4Release(void* userData);
-static void _Key5Release(void* userData);
+
 static void _AppendFaultsFromMask(std::vector<std::string>& faultVec, uint32_t mask, FAULT_CODE code);
 void Scrn01FaultsCreate(void)
 {

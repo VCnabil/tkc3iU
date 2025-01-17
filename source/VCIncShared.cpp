@@ -52,7 +52,7 @@ const char* GetDebugLogMessage(int index)
 // Provide the actual storage definition for m_FAULTS_DB[]
 extern FAULTS_DB m_FAULTS_DB[] = {
 
- { STA1, 0, false, "Idle Knob" },
+    { STA1, 0, false, "Idle Knob" },
     { STA1, 1, false, "Helm / Tiller" },
     { STA1, 2, false, "Stbd Lever" },
     { STA1, 3, false, "Port Lever" },
@@ -149,29 +149,28 @@ int PB_NEUTRAL_THRUST_TEMP, SB_NEUTRAL_THRUST_TEMP;
 
   unsigned int VCI_soundSiren; // a global flag indicating a new alarm has come , needed to sound siren
 
-
+  unsigned int dockMode_delayCntr;
   //******************************************************************************
   //|                            FAULT DECODING                                  |
   //******************************************************************************
 
-  void setFaultFlag(int status, int* flt)
+  void setFaultFlag(int status, int* faultState)
   {
-	  if (status) // status 1
-	  {
-		  if (*flt < STATE2)
-		  {
-			  *flt = STATE3;
-			  VCI_soundSiren = 1; // a global flag indicating a new alarm has come , needed to sound siren
-		  }
-	  }
-
-	  else   // status 0
-	  {
-		  if (*flt > STATE1)
-		  {
-			  *flt = STATE1;
-		  }
-	  }
+      if (status) // Fault is active
+      {
+          if (*faultState < STATE2)
+          {
+              *faultState = STATE3; // Set to active fault state
+              VCI_soundSiren = 1;   // Trigger siren
+          }
+      }
+      else // Fault is inactive
+      {
+          if (*faultState > STATE1)
+          {
+              *faultState = STATE1; // Clear fault state
+          }
+      }
   }
 
 
@@ -247,4 +246,113 @@ int PB_NEUTRAL_THRUST_TEMP, SB_NEUTRAL_THRUST_TEMP;
 	  setFaultFlag(GETBIT(RCV_CANFault, 2), &ClutchST2_CAN_Fault);
 
   }
+  void Decode_SignalFault(void)
+  {
+      uint32_t faultBits = 0;
+      if (Database_Get_CurrentValue(db_VECTOR_signal_fault_error, &faultBits))
+      {
+          setFaultFlag(GETBIT(faultBits, 0), &SBkt_sigFault);
+          setFaultFlag(GETBIT(faultBits, 1), &PBkt_sigFault);
+          setFaultFlag(GETBIT(faultBits, 2), &SNoz_sigFault);
+          setFaultFlag(GETBIT(faultBits, 3), &PNoz_sigFault);
+          setFaultFlag(GETBIT(faultBits, 4), &STab_sigFault);
+          setFaultFlag(GETBIT(faultBits, 5), &PTab_sigFault);
+      }
+  }
+  void Decode_NfuFault(void) {
+  
+      uint32_t faultBits = 0;
+	  if (Database_Get_CurrentValue(db_VECTOR_nfu_fault_error, &faultBits))
+	  {
+		  setFaultFlag(GETBIT(faultBits, 0), &SBkt_nfuFault);
+		  setFaultFlag(GETBIT(faultBits, 1), &PBkt_nfuFault);
+		  setFaultFlag(GETBIT(faultBits, 2), &SNoz_nfuFault);
+		  setFaultFlag(GETBIT(faultBits, 3), &PNoz_nfuFault);
+		  setFaultFlag(GETBIT(faultBits, 4), &STab_nfuFault);
+		  setFaultFlag(GETBIT(faultBits, 5), &PTab_nfuFault);
+	  }
+  }
 
+  void Decode_STA1Fault(void) {
+      uint32_t faultBits = 0;
+      if (Database_Get_CurrentValue(db_VECTOR_STA1_fault_error, &faultBits))
+      {
+          SLev1_Fault = GETBIT(faultBits, 2);
+          PLev1_Fault = GETBIT(faultBits, 3);
+          setFaultFlag(GETBIT(faultBits, 0), &Idle1_Fault);
+          setFaultFlag(GETBIT(faultBits, 1), &Helm1_Fault);
+          setFaultFlag(GETBIT(faultBits, 4), &JoyY1_Fault);
+          setFaultFlag(GETBIT(faultBits, 5), &JoyX1_Fault);
+      }
+  }
+
+  void Decode_STA2Fault(void) {
+	  uint32_t faultBits = 0;
+	  if (Database_Get_CurrentValue(db_VECTOR_STA2_fault_error, &faultBits))
+	  {
+          SLev2_Fault = GETBIT(faultBits, 2);
+          PLev2_Fault = GETBIT(faultBits, 3);
+		  setFaultFlag(GETBIT(faultBits, 0), &Idle2_Fault);
+		  setFaultFlag(GETBIT(faultBits, 1), &Helm2_Fault);
+		  setFaultFlag(GETBIT(faultBits, 4), &JoyY2_Fault);
+		  setFaultFlag(GETBIT(faultBits, 5), &JoyX2_Fault);
+	 
+	  }
+  }
+
+  void Decode_STA3Fault(void) {
+	  uint32_t faultBits = 0;
+	  if (Database_Get_CurrentValue(db_VECTOR_STA3_fault_error, &faultBits))
+	  {
+          Idle3_Fault = GETBIT(faultBits, 0);
+          Helm3_Fault = GETBIT(faultBits, 1);
+          SLev3_Fault = GETBIT(faultBits, 2);
+          PLev3_Fault = GETBIT(faultBits, 3);
+          JoyY3_Fault = GETBIT(faultBits, 4);
+          JoyX3_Fault = GETBIT(faultBits, 5);
+	  }
+  }
+
+  void Decode_CalFault(void) {
+      uint32_t faultBits = 0;
+      if (Database_Get_CurrentValue(db_VECTOR_cal_fault_error, &faultBits))
+      {
+          setFaultFlag(GETBIT(faultBits, 0), &Trim1_Fault);
+          setFaultFlag(GETBIT(faultBits, 1), &Roll1_Fault);
+          setFaultFlag(GETBIT(faultBits, 2), &Cal_Fault);
+          setFaultFlag(GETBIT(faultBits, 3), &AP_Fault);
+          setFaultFlag(GETBIT(faultBits, 4), &Trim2_Fault);
+          setFaultFlag(GETBIT(faultBits, 5), &Roll2_Fault);
+      }
+}
+void Decode_InterlockFault(void) {
+    unsigned int gdf;
+    unsigned int cdf;
+
+    uint32_t faultBits = 0;
+	if (Database_Get_CurrentValue(db_VECTOR_interlock_fault_error, &faultBits))
+	{
+        gdf = GETBIT(faultBits, 0);
+        cdf = GETBIT(faultBits, 1);
+        // implement a 4 second delay for dockmode clutch disengage alarm to register
+        if (cdf && dockMode_delayCntr == 0 && (clutchDiseng_Fault < STATE2))
+        {
+            dockMode_delayCntr = 5; // init the counter, it is decremented in the vSched_call_1000mS() function in main
+        }
+        else if (cdf && dockMode_delayCntr == 1) // when the cntr reaches 1 , set the fault
+        {
+            setFaultFlag(gdf, &generalDock_Fault);
+            setFaultFlag(cdf, &clutchDiseng_Fault);
+        }
+        else if (cdf == 0)
+        {
+            setFaultFlag(gdf, &generalDock_Fault);
+            setFaultFlag(cdf, &clutchDiseng_Fault);
+            dockMode_delayCntr = 0;
+        }
+        //generalDock_Fault = GETBIT(flt,0);
+        //  setFaultFlag(GETBIT(flt,0), &generalDock_Fault);
+        //  setFaultFlag(GETBIT(flt,1), &clutchDiseng_Fault);
+        Inbd_Fault = GETBIT(faultBits, 2);
+	}
+}

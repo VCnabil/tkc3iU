@@ -35,6 +35,7 @@
 #include "UI/screens.h"
 #include "UI/buttonbar.h"
 #include "UI/keyboard.h"
+#include "UI/graphs.h"
 //screens
 
 #include "UI/Screens/scrn00debugCAN.h"
@@ -78,4 +79,7 @@
 #include "CAN/J1939/J1939_FF1B_VECTOR_RS232_INTERLOCKFAULT.h"
 #include "CAN/J1939/J1939_FF51_VECTOR_ALARM_ACKNOWLEDGE.h"
 #include "CAN/J1939/J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE.h"
+#include "UI/Screens/Scrn00Indicatons.h"
+#include "UI/Screens/Scrn01Indicatons.h"
+#include "UI/Screens/Scrn02Indicatons.h"
 #endif // #ifndef __PROJECT_H__

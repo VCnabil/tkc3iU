@@ -25,7 +25,7 @@ void J1939_FF0F_VECTOR_RS232_PORTNOZZLE(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 		db_VECTOR_port_nozzle,
 		&dbValue,
 		DBVARTYPE_UNSIGNED_INT,
-		DBSOURCE_NMEA0183
+		DBSOURCE_CAN
 	);
 
 	if (updateSuccess)

@@ -39,6 +39,9 @@ void ScreensInit(void)
 	MMIRegisterScreen(SCREENID_SCRN01FAULTS, Scrn01FaultsEnter, Scrn01FaultsCreate, Scrn01FaultsUpdate, Scrn01FaultsExit);
 	MMIRegisterScreen(SCREENID_SCRN02FAULTS, scrn02FaultsEnter, scrn02FaultsCreate, scrn02FaultsUpdate, scrn02FaultsExit);
     MMIRegisterScreen(SCREENID_SCRN01LIVEDBVIEW, Scrn01LiveDbViewEnter, Scrn01LiveDbViewCreate, Scrn01LiveDbViewUpdate, Scrn01LiveDbViewExit);
+    MMIRegisterScreen(SCREENID_SCRN00INDICATONS, Scrn00IndicatonsEnter, Scrn00IndicatonsCreate, Scrn00IndicatonsUpdate, Scrn00IndicatonsExit);
+	MMIRegisterScreen(SCREENID_SCRN01INDICATONS, Scrn01IndicatonsEnter, Scrn01IndicatonsCreate, Scrn01IndicatonsUpdate, Scrn01IndicatonsExit);
+    MMIRegisterScreen(SCREENID_SCRN02INDICATONS, Scrn02IndicatonsEnter, Scrn02IndicatonsCreate, Scrn02IndicatonsUpdate, Scrn02IndicatonsExit);
 	
 	// Initial screen.
 MMIScreenGoto(SCREENID_START);
