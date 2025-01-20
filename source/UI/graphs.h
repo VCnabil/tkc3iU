@@ -31,6 +31,7 @@ public:
 
     // Method to draw the bar graph on the screen
     void draw(int position, bool fault) const;
+    void draw2(int position, bool fault) const;
 };
 
 class DoubleSidedHorizontalBarGraph {
@@ -52,6 +53,7 @@ public:
 
     // Method to draw the bar graph on the screen
     void draw(int position, bool fault) const;
+    void draw2(int position, bool fault) const;
 };
 
 class SingleSidedVerticalBarGraph {
@@ -73,6 +75,7 @@ public:
 
     // Method to draw the bar graph on the screen
     void draw(int position, bool fault) const;
+    void draw2(int position, bool fault) const;
 };
 
 class SingleSidedHorizontalBarGraph {
@@ -92,6 +95,7 @@ public:
 
     // Method to draw the bar graph on the screen
     void draw(int position) const;
+    void draw2(int position) const;
 };
 
 #endif
