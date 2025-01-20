@@ -91,14 +91,23 @@ extern FAULTS_DB m_FAULTS_DB[] = {
 	{ GAL, 0, false, "General Alarm" }
 };
 
+int Autocal_Status = 0;
+int Autocal_CMD=0;
+int Set1_Set2_Mode = 0;
+int Position_Capture_Request=0;
 
+int Intsteer_Enable = 0;
+int Enable_RS232_Transmission = 0;
+int Local_Enable_RS232_Transmission = 0;
 // These are new variables to hold the status of Central alarm faults. These will replace the database elements
 // These will also have 4 states similar to propn alarms described above
 // These are introduced to reduce the overhead caused by using  the database method
   int Central_Alarm_01, Central_Alarm_02, Central_Alarm_03, Central_Alarm_04, Central_Alarm_05;
   int Central_Alarm_06, Central_Alarm_07, Central_Alarm_08, Central_Alarm_09, Central_Alarm_10;
   int Central_Alarm_11, Central_Alarm_12, Central_Alarm_13, Central_Alarm_14, Central_Alarm_15;
-  int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
+ int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
+   int* centralAlarmArray[NUMBER_OF_CENTRAL_ALARMS];
+   int* propnFaultArray[NUMBER_0F_PROPN_FAULTS];
 
 //Fault Variables
 // The Fault variables will now hold Fault state information, the larger number indicates higher weightage to the fault state
@@ -125,14 +134,14 @@ int No_or_Bad_CAN_Data_CentralAlarmSys = 0;
 int CCIM_Fault = 0;
 int CCIM_Fault_Counter = 0;
 int Serial_Fault, CAN_Fault, ControlSystem_Fault, Faults_on_Screen, MS_CAN_Fault, CentralAlarmSys_Fault, CentralAlarmSys_CAN_Fault; //MS = Main Station
-int Serial_Fault_State; 
+int Serial_Fault_State=0; 
 int InMainScreen, InFaultScreen, AlarmMuteFlag, AlarmMuteFlag_CentralAlarm, StaticAlarmDisplayed, clearonce;
 int SCFaultCount, CSFaultCount, CANFaultCount;
 
 //for RS232-CAN message prioritizing over CCIM CAN messages.
 int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
 int PORTTAB_rs232counter, STBDTAB_rs232counter;
-
+int RS232_XMIT_COUNTER = 0;
 
 //for indicator calibration int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN;// <--declared in can.c
 

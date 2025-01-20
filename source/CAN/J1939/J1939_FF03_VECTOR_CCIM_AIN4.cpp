@@ -2,6 +2,9 @@
  
 void J1939_FF03_VECTOR_CCIM_AIN4(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 {
+    if (SettingsGetStationType() == wing_station) {
+        return;
+    }
     if (pMsg->msg_length < 2) {
         return;
     }

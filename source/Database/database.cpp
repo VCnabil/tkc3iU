@@ -291,7 +291,7 @@ BOOL Database_Set_NMEA0183(int DataBaseIndex, const DBVAR_T* pData, DBVARTYPE_T 
 
 
 
-BOOL Database_Set_Conditional(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataType,DBSOURCE_T source)
+BOOL Database_Set_Conditionalbad(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataType,DBSOURCE_T source)
 {
 	if (pData == NULL || dbIndex < 0 || dbIndex >= DATABASEINDEX_MAX)
 	{
@@ -324,6 +324,19 @@ BOOL Database_Set_Conditional(int dbIndex,const DBVAR_T* pData,DBVARTYPE_T dataT
 	return bRet;
 }
 
+BOOL Database_Set_Conditional(int dbIndex, const DBVAR_T* pData, DBVARTYPE_T dataType, DBSOURCE_T source) {
+	if (pData == NULL || dbIndex < 0 || dbIndex >= DATABASEINDEX_MAX) {
+		return FALSE; // Invalid input
+	}
+
+	// Always set the database item, no restrictions
+	BOOL bRet = _Database_Set(dbIndex, pData, dataType, source,
+		(CAN_PORTS_T)0, // Dummy canPort
+		255,            // Dummy sourceAddress
+		255             // Dummy nmeaInstanceOrSequenceID
+	);
+	return bRet;
+}
 
 
 
@@ -540,7 +553,7 @@ BOOL IsPortNozzleStale(void)
 			isStale = TRUE;
 		}
 		SetDebugMessage("IsPortNozzleStale: Timer=%u, OwnerSource=%d, Stale=%s",
-pElement->Timer, pElement->OwnerSource, isStale ? "YES" : "NO");
+		pElement->Timer, pElement->OwnerSource, isStale ? "YES" : "NO");
 
 	}
 	MutexUnlock(&m_mutexHandle);

@@ -36,6 +36,8 @@
 #include "UI/buttonbar.h"
 #include "UI/keyboard.h"
 #include "UI/graphs.h"
+#include "UI/IndicatorUI/GHorizontal.h"
+#include "UI/IndicatorUI/GVertical.h"
 //screens
 
 #include "UI/Screens/scrn00debugCAN.h"

@@ -554,7 +554,7 @@ void SettingsToggleIndicationConfig(void)
 // -----------------------
 // XMIT RS232
 // -----------------------
-int Local_Enable_RS232_Transmission = 0; // Definition with an initial value
+//int Local_Enable_RS232_Transmission = 0; // Definition with an initial value
 uint8_t SettingsGetXmitrs232OnOff(void)
 {
 	return m_settings.XMIT_RS232;
@@ -585,7 +585,7 @@ void SettingsToggleXmitrs232OnOff(void)
 // INSTEER
 // -----------------------
 
-int Intsteer_Enable = 0; // Definition with an initial value
+//int Intsteer_Enable = 0; // Definition with an initial value
 uint8_t SettingsGetInSteerOnOff(void)
 {
 	return m_settings.INTSTEER;
@@ -694,20 +694,20 @@ static void _SettingsLoadDefaults(void)
     m_settings.INTSTEER = 1; // 1 = ON, 0 = OFF
 
 
-	m_settings.PN_MAX = 450;
+	m_settings.PN_MAX = 1000;
 	m_settings.PN_MIN = 0;
-	m_settings.SN_MAX = 450;
+	m_settings.SN_MAX = 1000;
 	m_settings.SN_MIN = 0;
-	m_settings.PB_MAX = 450;
+	m_settings.PB_MAX = 1000;
 	m_settings.PB_MIN = 0;
-	m_settings.SB_MAX = 450;
+	m_settings.SB_MAX = 1000;
 	m_settings.SB_MIN = 0;
-	m_settings.PT_MAX = 450;
+	m_settings.PT_MAX = 1000;
 	m_settings.PT_MIN = 0;
-	m_settings.ST_MAX = 450;
+	m_settings.ST_MAX = 1000;
 	m_settings.ST_MIN = 0;
-	m_settings.PB_NEUTRAL_THRUST = 225;
-	m_settings.SB_NEUTRAL_THRUST = 225;
+	m_settings.PB_NEUTRAL_THRUST = 500;
+	m_settings.SB_NEUTRAL_THRUST = 500;
   
 }
  

@@ -64,12 +64,7 @@ void CANDeInit(void)
 //------------------------------------------------------------------------------
 void CANProcessRx(void)
 {
-  
-    //if (SettingsGetDataMode() != CANbus_mode && SettingsGetDataMode() != CANbus_GPSI_mode)
-    //{
-    //    return;
-    //}
-    // Check both ports
+
     uint32_t canPort;
     for (canPort = CAN_PORT1; canPort < CAN_MAX_PORTS; canPort++)
     {
@@ -91,6 +86,9 @@ void CANProcessRx(void)
         }
     }
 }
+
+ 
+
 
 // Send a CAN message to the specified port
 BOOL CANSend(CAN_PORTS_T canPort, uint32_t id, BOOL bExtended, uint8_t* pData, uint32_t dataLen)
@@ -149,76 +147,104 @@ static void CANDecodeRxStd(CAN_PORTS_T canPort,
 	}
 }
 
-// Decode extended (29-bit) CAN messages
-static void CANDecodeRxExt(CAN_PORTS_T canPort,CAN_MSG_T* pMsg)
-{
-	// Which PGN was it?
-	switch (CANIDEXT_GETPGN(pMsg->id))
-	{
-   
-            //Indication via CCIM....................................................................
-        case PGN_FF00:
-            if(SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF00_VECTOR_CCIM_AIN1(canPort, pMsg);
-            break;
-        case PGN_FF01:
-            if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF01_VECTOR_CCIM_AIN2(canPort, pMsg);
-		    break;
-        case PGN_FF02:
-            if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF02_VECTOR_CCIM_AIN3(canPort, pMsg);
-            break;
-        case PGN_FF03:
-            if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF03_VECTOR_CCIM_AIN4(canPort, pMsg);
-            break;
-        case PGN_FF04:
-            if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF04_VECTOR_CCIM_AIN5(canPort, pMsg);
-		    break;
-        case PGN_FF05:
-            if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF05_VECTOR_CCIM_AIN6(canPort, pMsg);
-		    break;
-            //Faults via RS232.......................................................................
-        case PGN_FF15:    //signal fault, recieved via RS232
-            if (SettingsGetStationType() == wing_station)J1939_FF15_VECTOR_RS232_SIGFAULT(canPort, pMsg);  
-            break;
-        case PGN_FF16:    //NFU fault, recieved via RS232
-            if (SettingsGetStationType() == wing_station)J1939_FF16_VECTOR_RS232_NFUFAULT(canPort, pMsg); 
-            break;
-        case PGN_FF17:    //STA1 fault, recieved via RS232
-			if (SettingsGetStationType() == wing_station)J1939_FF17_VECTOR_RS232_STA1FAULT(canPort, pMsg);  
-            break;
-        case PGN_FF18:    //STA2 fault, recieved via RS232  
-            if (SettingsGetStationType() == wing_station)J1939_FF18_VECTOR_RS232_STA2FAULT(canPort, pMsg);  
-			break;
-        case PGN_FF19:    //STA3 fault, recieved via RS232
-			if (SettingsGetStationType() == wing_station)J1939_FF19_VECTOR_RS232_STA3FAULT(canPort, pMsg);  
-			break;
-		case PGN_FF1A:    //CAL fault, recieved via RS232
-            if (SettingsGetStationType() == wing_station)J1939_FF1A_VECTOR_RS232_CALFAULT(canPort, pMsg);  
-            break;
-            //Indication via RS232...................................................................
-        case PGN_FF0F:
-            J1939_FF0F_VECTOR_RS232_PORTNOZZLE(canPort, pMsg);
-            break;
-        case PGN_FF10:
-		    J1939_FF10_VECTOR_RS232_STBDNOZZLE(canPort, pMsg);
-            break;
-        case PGN_FF11:
-                J1939_FF11_VECTOR_RS232_PORTBUCKET(canPort, pMsg);
-            break;
-        case PGN_FF12:
-			    J1939_FF12_VECTOR_RS232_STBDBUCKET(canPort, pMsg);
-         break;
-        case PGN_FF13:
-                J1939_FF13_VECTOR_RS232_PORTTRIMTAB(canPort, pMsg);
-            break;
-        case PGN_FF14:
-			    J1939_FF14_VECTOR_RS232_STBDTRIMTAB(canPort, pMsg);
-            break;
+//// Decode extended (29-bit) CAN messages
+//static void CANDecodeRxExt(CAN_PORTS_T canPort,CAN_MSG_T* pMsg)
+//{
+//	// Which PGN was it?
+//	switch (CANIDEXT_GETPGN(pMsg->id))
+//	{
+//   
+//            //Indication via CCIM....................................................................
+//        case PGN_FF00:
+//            if(SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF00_VECTOR_CCIM_AIN1(canPort, pMsg);
+//            break;
+//            //Faults via RS232.......................................................................
+//        case PGN_FF15:    //signal fault, recieved via RS232
+//            if (SettingsGetStationType() == wing_station)J1939_FF15_VECTOR_RS232_SIGFAULT(canPort, pMsg);  
+//            break;
+//            //Indication via RS232...................................................................
+//        case PGN_FF0F:
+//            J1939_FF0F_VECTOR_RS232_PORTNOZZLE(canPort, pMsg);
+//            break;
+//         
+//    
+//	default:
+//		break;
+//	}
+//}
 
-        case PGN_FF50:
-            J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE(canPort, pMsg);
-            break;
-    
-	default:
-		break;
-	}
+
+
+// Decode extended (29-bit) CAN messages
+static void CANDecodeRxExt(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
+{
+   
+    switch (CANIDEXT_GETPGN(pMsg->id))
+    {
+
+        //Indication via CCIM....................................................................
+    case PGN_FF00:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF00_VECTOR_CCIM_AIN1(canPort, pMsg);
+        break;
+    case PGN_FF01:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF01_VECTOR_CCIM_AIN2(canPort, pMsg);
+        break;
+    case PGN_FF02:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF02_VECTOR_CCIM_AIN3(canPort, pMsg);
+        break;
+    case PGN_FF03:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF03_VECTOR_CCIM_AIN4(canPort, pMsg);
+        break;
+    case PGN_FF04:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF04_VECTOR_CCIM_AIN5(canPort, pMsg);
+        break;
+    case PGN_FF05:
+        if (SettingsGetDataMode() == CANbus_GPSI_mode)J1939_FF05_VECTOR_CCIM_AIN6(canPort, pMsg);
+        break;
+        //Faults via RS232.......................................................................
+    case PGN_FF15:    //signal fault, recieved via RS232
+        if (SettingsGetStationType() == wing_station)J1939_FF15_VECTOR_RS232_SIGFAULT(canPort, pMsg);
+        break;
+    case PGN_FF16:    //NFU fault, recieved via RS232
+        if (SettingsGetStationType() == wing_station)J1939_FF16_VECTOR_RS232_NFUFAULT(canPort, pMsg);
+        break;
+    case PGN_FF17:    //STA1 fault, recieved via RS232
+        if (SettingsGetStationType() == wing_station)J1939_FF17_VECTOR_RS232_STA1FAULT(canPort, pMsg);
+        break;
+    case PGN_FF18:    //STA2 fault, recieved via RS232  
+        if (SettingsGetStationType() == wing_station)J1939_FF18_VECTOR_RS232_STA2FAULT(canPort, pMsg);
+        break;
+    case PGN_FF19:    //STA3 fault, recieved via RS232
+        if (SettingsGetStationType() == wing_station)J1939_FF19_VECTOR_RS232_STA3FAULT(canPort, pMsg);
+        break;
+    case PGN_FF1A:    //CAL fault, recieved via RS232
+        if (SettingsGetStationType() == wing_station)J1939_FF1A_VECTOR_RS232_CALFAULT(canPort, pMsg);
+        break;
+        //Indication via RS232...................................................................
+    case PGN_FF0F:
+        J1939_FF0F_VECTOR_RS232_PORTNOZZLE(canPort, pMsg);
+        break;
+    case PGN_FF10:
+        J1939_FF10_VECTOR_RS232_STBDNOZZLE(canPort, pMsg);
+        break;
+    case PGN_FF11:
+        J1939_FF11_VECTOR_RS232_PORTBUCKET(canPort, pMsg);
+        break;
+    case PGN_FF12:
+        J1939_FF12_VECTOR_RS232_STBDBUCKET(canPort, pMsg);
+        break;
+    case PGN_FF13:
+        J1939_FF13_VECTOR_RS232_PORTTRIMTAB(canPort, pMsg);
+        break;
+    case PGN_FF14:
+        J1939_FF14_VECTOR_RS232_STBDTRIMTAB(canPort, pMsg);
+        break;
+
+    case PGN_FF50:
+        J1939_FF50_VECTOR_ALARM_ACKNOWLEDGE(canPort, pMsg);
+        break;
+
+    default:
+        break;
+    }
 }

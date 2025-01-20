@@ -8,6 +8,7 @@
 #include "syslib.h"   // or whichever file declares MUTEXHANDLE_T
 #include <vector>
 #include <string>
+#define BAD_DATA_THRESHOLD 60  //bad data threshold is 3 seconds (1 = 50ms)
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
 #define TIMER_NETWORK_PRESET           100   /* wait 10s before displaying LOST CONNECTION   */
@@ -45,11 +46,19 @@
 #define DEBUG_LOG_MAX_MESSAGES 10
 #define DEBUG_MSG_MAX_LENGTH 256
 
+// The total number of propulsion system faults related to the RBM that have the new state feature
+// 31 + 1(serial) = 32
+#define NUMBER_0F_PROPN_FAULTS   32
+
+#define NUMBER_OF_CENTRAL_ALARMS  17
+
 extern int Intsteer_Enable;
 //Enable_RS232_Transmission is set from reading the i15 from serial received line . if it is 1 , Enable_RS232_Transmission = 0; if it is 0, Enable_RS232_Transmission = 1 that s if we are the main statoin
 extern int Enable_RS232_Transmission;
 //Local_Enable_RS232_Transmission is set SysOpts screen .   
 extern int Local_Enable_RS232_Transmission ;
+
+ 
 
 typedef enum
 {
@@ -120,15 +129,16 @@ extern   int Central_Alarm_06, Central_Alarm_07, Central_Alarm_08, Central_Alarm
 extern   int Central_Alarm_11, Central_Alarm_12, Central_Alarm_13, Central_Alarm_14, Central_Alarm_15;
 extern   int Central_Alarm_16, Central_Alarm_17, Central_Alarm_18, Central_Alarm_19, Central_Alarm_20;
 
-extern unsigned int* centralAlarmArray[];
-
+extern  int* centralAlarmArray[];
+extern int* propnFaultArray[];
 extern int No_or_Bad_Data, No_or_Bad_CAN_Data, No_or_Bad_CAN_Data_CentralAlarmSys, CCIM_Fault, CCIM_Fault_Counter;
 extern int Serial_Fault, CAN_Fault, ControlSystem_Fault, Faults_on_Screen, MS_CAN_Fault, CentralAlarmSys_Fault, CentralAlarmSys_CAN_Fault;
 extern int InMainScreen, InFaultScreen, AlarmMuteFlag, AlarmMuteFlag_CentralAlarm, StaticAlarmDisplayed, clearonce;
 extern int SCFaultCount, CSFaultCount, CANFaultCount;
 extern unsigned int uiUnacknowledged_PropulsionSystemFault;
 extern unsigned int vci_status, autopilot, dk_tr_mode;  // these variables are used to display the status text on the screen
-  
+extern int Serial_Fault_State;
+extern int RS232_XMIT_COUNTER;
 
 //allows wing stations to read the rs232->can data instead of the CCIM can data.
 extern int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
@@ -137,6 +147,12 @@ extern int PORTTAB_rs232counter, STBDTAB_rs232counter;
 //for calibration
 extern int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
 extern int CAL_FLAG;
+
+//for initiating and ending a system (hydraulic) autocal from the system calibration screen
+extern int Autocal_CMD;
+extern int Autocal_Status; //status of the autocal, transmitted from the controller to the cantrak
+extern int Set1_Set2_Mode, Position_Capture_Request;
+
 
 extern int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP;
 extern int SB_MAX_TEMP, SB_MIN_TEMP, SN_MAX_TEMP, SN_MIN_TEMP;
@@ -170,6 +186,20 @@ const char* GetStationAndComModeString(void);
 
 // Fault state for the faults.
 enum { STATE0, STATE1, STATE2, STATE3 };
+
+enum Screen_State {
+    DEFAULT,
+    THRUST_MENU,
+    ZERO_THRUST,
+    TRANSMIT,
+    AUTOCALIBRATION
+};
+enum AutoCal_Command {
+    NONE = 0,
+    INITIALIZE = 11,
+    ABORT = 33,
+    FINISH = 22,
+};
 #endif // __VCINC_H__
 
 

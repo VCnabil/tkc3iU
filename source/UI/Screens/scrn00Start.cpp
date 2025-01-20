@@ -46,7 +46,7 @@ void Scrn00StartCreate(void)
 	ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
 	ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "to", "OPTS");
 	ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "live", "DB view");
-	ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "debug", "COM");
+	ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "CAlib", "ration");
 	ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 9, BLACK, "faults", "00");  
     ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "Indic", "00");
 	ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
@@ -107,7 +107,7 @@ static void _Key2Release(void* userData)
 static void _Key3Release(void* userData)
 {
     // Add actions for Key 3 release
-    MMIScreenGoto(SCREENID_DEBUGCOM);
+    MMIScreenGoto(SCREENID_CALIBRATION);
 	 
 }
 

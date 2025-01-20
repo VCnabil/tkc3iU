@@ -3,6 +3,9 @@
 
 void J1939_FF00_VECTOR_CCIM_AIN1(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
 {     
+    if (SettingsGetStationType() == wing_station) {
+        return;
+    }
     if (pMsg->msg_length < 2) {
        // SetDebugMessage ("FF00 CCIM_AIN1: less than 2bytes: %u", pMsg->msg_length);
         return;

@@ -26,7 +26,9 @@ source/UI/keyboard.cpp
 source/UI/graphs.cpp
 source/data.cpp
 source/main.cpp
-source/VCIncShared.cpp 
+source/VCIncShared.cpp
+source/UI/IndicatorUI/GVertical.cpp
+source/UI/IndicatorUI/GHorizontal.cpp
 #screens
 source/UI/Screens/scrn00Start.cpp
 source/UI/Screens/scrn00SysOpts.cpp

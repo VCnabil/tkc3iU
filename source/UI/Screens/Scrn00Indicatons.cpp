@@ -30,7 +30,7 @@ DoubleSidedHorizontalBarGraph nozzle2;
 SingleSidedVerticalBarGraph interceptor1;
 SingleSidedVerticalBarGraph interceptor2;
 
-/*
+ 
 /*
 void graphSetup() {
     // Reset or initialize all graph objects to default state
@@ -192,35 +192,29 @@ void graphDraw() {
         bucket2.draw(stbdBucketPosition, false);
         break;
     case 3:
-            bucket1.draw(portBucketPosition, false);
-            bucket2.draw(stbdBucketPosition, false);
-
-            nozzle1.draw(portNozzlePosition, false);
-    break;
-    case 4:
-		nozzle1.draw(portNozzlePosition, false);
-		nozzle2.draw(stbdNozzlePosition, false);
-		bucket1.draw(portBucketPosition, false);
-		bucket2.draw(stbdBucketPosition, false);
-		interceptor1.draw(portInterceptorPosition, false);
-		interceptor2.draw(stbdInterceptorPosition, false);
-    break;
-    case 5:
-		nozzle1.draw(portNozzlePosition, false);
-		bucket1.draw(portBucketPosition, false);
-		bucket2.draw(stbdBucketPosition, false);
-		interceptor1.draw(portInterceptorPosition, false);
-		interceptor2.draw(stbdInterceptorPosition, false);
+        bucket1.draw(portBucketPosition, false);
+        bucket2.draw(stbdBucketPosition, false);
+        nozzle1.draw(portNozzlePosition, false);
         break;
-        default:
-            nozzle1.draw(portNozzlePosition, false);
-			//nozzle2.draw(stbdNozzlePosition, false);
-			//bucket1.draw(portBucketPosition, false);
-			//bucket2.draw(stbdBucketPosition, false);
-			break;
-
-
-
+    case 4:
+        nozzle1.draw(portNozzlePosition, false);
+        nozzle2.draw(stbdNozzlePosition, false);
+        bucket1.draw(portBucketPosition, false);
+        bucket2.draw(stbdBucketPosition, false);
+        interceptor1.draw(portInterceptorPosition, false);
+        interceptor2.draw(stbdInterceptorPosition, false);
+        break;
+    case 5:
+        nozzle1.draw(portNozzlePosition, false);
+        bucket1.draw(portBucketPosition, false);
+        bucket2.draw(stbdBucketPosition, false);
+        interceptor1.draw(portInterceptorPosition, false);
+        interceptor2.draw(stbdInterceptorPosition, false);
+        break;
+    default:
+        nozzle1.draw(portNozzlePosition, false);
+        bucket1.draw(0, false); // Default empty draw
+        break;
     }
 
 }
@@ -232,15 +226,25 @@ void graphDraw() {
  
 void Scrn00IndicatonsUpdate(void)
 {
-    // Clear the screen
-    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
+    // Cache database values
+    static uint32_t last_config = UINT32_MAX;
+    uint32_t indication_config = 0;
+    Database_Get_CurrentValue(db_VECTOR_I14_INDICConfig, &indication_config);
 
+    if (indication_config != last_config) {
+        graphSetup(indication_config);
+        last_config = indication_config;
+    }
+
+    // Clear only the necessary layers or regions
     fill_lcd_screen(MAKERGB565(121, 137, 121), LAYER_FRONT);
-    // Display Station and Communication Mode String
+
+    // Display station and communication mode
     const char* info = GetStationAndComModeString();
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 10, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
     SimpleTextDraw(lcd_get_width() / 2, 4, info, BLACK, 100, LAYER_FRONT);
 
+    // Draw graphs
     graphDraw();
 }
 void Scrn00IndicatonsEnter(void)
@@ -261,23 +265,23 @@ void Scrn00IndicatonsCreate(void)
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
     ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "to", "start");
-    ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "", "");
-    ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "", "");
-	ButtonBarSetKeyText(KEYINDEX_4, FONT_INDEX_TTMAIN, 9, BLACK, "", "");
-    ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "", "");
-    ButtonBarSetMode(BUTTONBARMODE_VISIBLE_WITH_TIMEOUT);
-    // Draw a title
-    SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 10, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
-    //SimpleTextDraw(lcd_get_width() / 2, 0, "Scrn00Indicatons", BLACK, 100, LAYER_BACK);
+    ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "INDIC", "01");
 
+    ButtonBarSetMode(BUTTONBARMODE_VISIBLE_WITH_TIMEOUT);
+
+    // Draw a title
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 10, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
     SimpleTextDraw(lcd_get_width() / 2, 228, "TRANSIT / AUTOPILOT STRING", BLACK, 100, LAYER_FRONT);
 
-   // graphSetup();
+    // Initialize graphs
+    uint32_t indication_config_update = 0;
+    Database_Get_CurrentValue(db_VECTOR_I14_INDICConfig, &indication_config_update);
+    graphSetup(indication_config_update);
 }
 void Scrn00IndicatonsExit(void)
 {
-    
+    // Clear graphs or free resources if necessary
+    fill_lcd_screen(MAKERGB565(121, 137, 121), LAYER_FRONT);
 }
 //------------------------------------------------------------------------------
 // LOCAL FUNCTIONS
@@ -288,6 +292,7 @@ static void _Key1Release(void* userData)
 }
 static void _Key2Release(void* userData)
 {      
+    MMIScreenGoto(SCREENID_SCRN01INDICATONS);
 }
 static void _Key3Release(void* userData)
 {
