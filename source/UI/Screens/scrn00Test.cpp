@@ -25,8 +25,10 @@ static void _Key5Release(void* userData);
 
 void Scrn00TestUpdate(void)
 {
-   
-
+    VECTOR_stack_update(PORT_BUCKET);
+    VECTOR_stack_update(STBD_BUCKET);
+    VECTOR_stack_update(PORT_NOZZLE);
+    VECTOR_stack_update(STBD_NOZZLE);
 }
 
 

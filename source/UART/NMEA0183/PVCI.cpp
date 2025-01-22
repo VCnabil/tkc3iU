@@ -51,9 +51,9 @@ int NMEA0183_ProcessPVCI(char* pBuffer)
     // autocalSTATUS i16
     db_VECTOR_I16_autocalSTATUS,
     //vcican faults i17
-    db_VECTOR_VCICAN_fault_error,
+    db_VECTOR_I17_VCICAN_fault_error,
     // VCIstatus i18
-     db_VECTOR_VCIstatus,  
+     db_VECTOR_I18_VCIstatus,  
 
     };
     uint32_t i14 = 0, i15 = 0, i16 = 0, i17 = 0, i18 = 0; // Variables for specific fields

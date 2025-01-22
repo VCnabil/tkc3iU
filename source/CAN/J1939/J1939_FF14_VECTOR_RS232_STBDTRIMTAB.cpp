@@ -15,7 +15,7 @@ void J1939_FF14_VECTOR_RS232_STBDTRIMTAB(CAN_PORTS_T canPort, CAN_MSG_T* pMsg)
   uiData = (static_cast<uint32_t>(pMsg->msg_content[1]) << 8) |
 		   (static_cast<uint32_t>(pMsg->msg_content[0]) & 0x00FF);
 
-  uint32_t currentValue = 0.0f;
+  uint32_t currentValue = 0;
   bool hascurrent = Database_Get_CurrentValue(db_VECTOR_stbd_trimtab, &currentValue);
 
   DBVAR_T dbValue;

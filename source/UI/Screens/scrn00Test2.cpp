@@ -48,9 +48,9 @@ void Scrn00Test2Create(void)
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_4, _Key4Release, nullptr);
     ButtonBarRegisterKeyReleaseCallback(KEYINDEX_5, _Key5Release, nullptr);
     ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "to", "start");
-    ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "PN=", "222");
-    ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "PN=", "333");
-    ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "to", "db test");
+    //ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "PN=", "222");
+    //ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "PN=", "333");
+    //ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "to", "db test");
     ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
     // Draw a title
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
@@ -74,20 +74,13 @@ static void _Key1Release(void* userData)
 
 static void _Key2Release(void* userData)
 {
-   //set db port noz to 222
-    DBVAR_T nozzleValue;
-    nozzleValue.flt = 222; // Assign the new value.
-  //  Database_Set_NMEA0183(db_VECTOR_port_nozzle, &nozzleValue, DBVARTYPE_UNSIGNED_INT, 0);
     
 
 }
 
 static void _Key3Release(void* userData)
 {
-    //set db port noz to 333
-    DBVAR_T nozzleValue;
-    nozzleValue.flt = 333; // Assign the new value.
-  //  Database_Set_NMEA0183(db_VECTOR_port_nozzle, &nozzleValue, DBVARTYPE_UNSIGNED_INT, 0);
+ 
 }
 
 static void _Key4Release(void* userData)
@@ -97,5 +90,5 @@ static void _Key4Release(void* userData)
 
 static void _Key5Release(void* userData)
 {
-    MMIScreenGoto(SCREENID_TEST);
+  //  MMIScreenGoto(SCREENID_TEST);
 }

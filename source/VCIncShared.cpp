@@ -143,8 +143,13 @@ int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs
 int PORTTAB_rs232counter, STBDTAB_rs232counter;
 int RS232_XMIT_COUNTER = 0;
 
-//for indicator calibration int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN;// <--declared in can.c
-
+// indication display variables for applying hysteresis to display bar graphs (stacks)
+int bars_prev_PORT_BUCKET, bars_prev_PORT_NOZZLE, bars_prev_PORT_TAB;
+int bars_prev_STBD_BUCKET, bars_prev_STBD_NOZZLE, bars_prev_STBD_TAB;
+int PB_dir, PN_dir, SA_dir, PT_dir, SB_dir, SN_dir, ST_dir;
+int STACK_HALF, stack_temp;
+int indexI, stack_value, x_pos, y_pos, solid_bars, empty_bars;
+ 
 int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
 int CAL_FLAG=0;
 int PB_MAX_TEMP, PB_MIN_TEMP, PN_MAX_TEMP, PN_MIN_TEMP; //for calibration abort
@@ -365,3 +370,649 @@ void Decode_InterlockFault(void) {
         Inbd_Fault = GETBIT(faultBits, 2);
 	}
 }
+
+
+
+int x_size_off[10] = { 2, -1, 0, 1, 2, 3, 4, 5, 6, 7 };
+int y_size_off[19] = { -2, 1, 0, -1, -2, -3, -4, -5, -6, -7,
+                       -8, -9, -10, -11, -12, -13, -14, -15, -16
+};
+int x_size_off_tabs[19] = { 0, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 }; //for indication stack bar taper
+
+
+
+
+//bar remain constant, but we add an offset to the driving value when the
+//current (calculated) number of bars is less than the previous number of bars
+//7 = about 1.5% hysteresis (7 counts in each direction, scale of 1000)
+//void VECTOR_stack_update(int stack_number)
+//{
+//    switch (stack_number)
+//    {
+//    case 0:
+//        stack_value = (int)data_base[db_VECTOR_port_trimtab][0].data.flt;
+//        //stack number, stack_value, x_start, y_start, x_incr, y_incr, x_size, y_size, bars prev, dir
+//        bars_prev_PORT_TAB = DrawTabStack(stack_number, stack_value, T1_xpos,
+//            7, 0, 4, 10, 2, bars_prev_PORT_TAB, &PT_dir);
+//        break;
+//
+//    case 1:
+//        stack_value = (int)data_base[db_VECTOR_port_bucket][0].data.flt;
+//        bars_prev_PORT_BUCKET = DrawBucketStack(stack_number, stack_value, B1_xpos,
+//            43, 0, -4, -10, 2, bars_prev_PORT_BUCKET, &PB_dir);
+//        break;
+//
+//    case 2:
+//        stack_value = (int)data_base[db_VECTOR_stbd_bucket][0].data.flt;
+//        bars_prev_STBD_BUCKET = DrawBucketStack(stack_number, stack_value, B2_xpos,
+//            43, 0, -4, 10, 2, bars_prev_STBD_BUCKET, &SB_dir);
+//        break;
+//
+//    case 3:
+//        stack_value = (int)data_base[db_VECTOR_stbd_trimtab][0].data.flt;
+//        bars_prev_STBD_TAB = DrawTabStack(stack_number, stack_value, T2_xpos,
+//            7, 0, 4, -10, 2, bars_prev_STBD_TAB, &ST_dir);
+//        break;
+//
+//    case 4:
+//        stack_value = (int)data_base[db_VECTOR_port_nozzle][0].data.flt;
+//        bars_prev_PORT_NOZZLE = DrawNozzleStack(stack_number, stack_value, N1_xpos, 114, N1_xincr,
+//            0, -N1_xsize, -10, bars_prev_PORT_NOZZLE, &PN_dir);
+//        break;
+//
+//    case 5:
+//        stack_value = (int)data_base[db_VECTOR_stbd_nozzle][0].data.flt;
+//        //DrawSteerStack(stack_number, stack_value, S_xpos, 114, 4,0,-2,-10, bars_prev_STEER_ANGLE, &SA_dir);
+//        bars_prev_STBD_NOZZLE = DrawNozzleStack(stack_number, stack_value, N2_xpos, 114, N2_xincr,
+//            0, -N2_xsize, -10, bars_prev_STBD_NOZZLE, &SN_dir);
+//        break;
+//
+//    };
+//}
+int B1_xpos, B2_xpos, N1_xpos, N2_xpos, T1_xpos, T2_xpos;
+int N1_xincr, N2_xincr, N1_xsize, N2_xsize, DoubleBarFlag;
+int B1_present, B2_present, N1_present, N2_present, T1_present, T2_present;
+
+//bar remain constant, but we add an offset to the driving value when the
+//current (calculated) number of bars is less than the previous number of bars
+//7 = about 1.5% hysteresis (7 counts in each direction, scale of 1000)
+void VECTOR_stack_update(int stack_number)
+{
+    uint32_t indication_configV2 = 0;
+    uint32_t portNozzlePositionV2 = 0;
+    uint32_t stbdNozzlePositionV2 = 0;
+    uint32_t portBucketPositionV2 = 0;
+    uint32_t stbdBucketPositionV2 = 0;
+    uint32_t portInterceptorPositionV2 = 0;
+    uint32_t stbdInterceptorPositionV2 = 0;
+    Database_Get_CurrentValue(db_VECTOR_I14_INDICConfig, &indication_configV2);
+    Database_Get_CurrentValue(db_VECTOR_port_nozzle, &portNozzlePositionV2);
+    Database_Get_CurrentValue(db_VECTOR_stbd_nozzle, &stbdNozzlePositionV2);
+    Database_Get_CurrentValue(db_VECTOR_port_bucket, &portBucketPositionV2);
+    Database_Get_CurrentValue(db_VECTOR_stbd_bucket, &stbdBucketPositionV2);
+    Database_Get_CurrentValue(db_VECTOR_port_trimtab, &portInterceptorPositionV2);
+    Database_Get_CurrentValue(db_VECTOR_stbd_trimtab, &stbdInterceptorPositionV2);
+
+
+    switch (stack_number)
+    {
+    case 0:
+        stack_value = (int)portInterceptorPositionV2; // get data from db_VECTOR_port_trimtab
+		//stack number, stack_value, x_start, y_start, x_incr, y_incr, x_size, y_size, bars prev, dir
+		bars_prev_PORT_TAB = DrawTabStack(stack_number, stack_value, T1_xpos,
+			7, 0, 4, 10, 2, bars_prev_PORT_TAB, &PT_dir);
+		break;
+    case 1:
+        stack_value = (int)portBucketPositionV2;
+        bars_prev_PORT_BUCKET = DrawBucketStack(stack_number, stack_value, B1_xpos,
+            43, 0, -4, -10, 2, bars_prev_PORT_BUCKET, &PB_dir);
+        break;
+    case 2:
+        stack_value = (int)stbdBucketPositionV2;
+        bars_prev_STBD_BUCKET = DrawBucketStack(stack_number, stack_value, B2_xpos,
+            43, 0, -4, 10, 2, bars_prev_STBD_BUCKET, &SB_dir);
+        break;
+    case 3:
+        stack_value = (int)stbdInterceptorPositionV2;
+        bars_prev_STBD_TAB = DrawTabStack(stack_number, stack_value, T2_xpos,
+            7, 0, 4, -10, 2, bars_prev_STBD_TAB, &ST_dir);
+        break;
+    case 4:
+        stack_value = (int)portNozzlePositionV2;
+        bars_prev_PORT_NOZZLE = DrawNozzleStack(stack_number, stack_value, N1_xpos, 114, N1_xincr,
+            0, -N1_xsize, -10, bars_prev_PORT_NOZZLE, &PN_dir);
+        break;
+    case 5:
+        stack_value = (int)stbdNozzlePositionV2;
+        //DrawSteerStack(stack_number, stack_value, S_xpos, 114, 4,0,-2,-10, bars_prev_STEER_ANGLE, &SA_dir);
+        bars_prev_STBD_NOZZLE = DrawNozzleStack(stack_number, stack_value, N2_xpos, 114, N2_xincr,
+            0, -N2_xsize, -10, bars_prev_STBD_NOZZLE, &SN_dir);
+        break;
+    default:
+        break;
+    }
+
+}
+//---------------------------------------------------------------------------------------------
+//Indicator Processing for Nozzle Angle--------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+int DrawNozzleStack(int stack_num, int stack_val, int x_start, int y_start,
+    int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction)
+{
+
+    int number_bars;
+
+    //use twice as many bars if there is only a single nozzle meter displayed
+    if (( SettingsGetIndicationConfig() == 1) ||
+        (SettingsGetIndicationConfig() == 3) ||
+        (SettingsGetIndicationConfig() == 5))
+        number_bars = (NUMBER_BARS + NUMBER_BARS / 2);
+
+    else
+        number_bars = NUMBER_BARS;
+
+    //initialize variable values
+    x_pos = x_start;
+    y_pos = y_start;
+    solid_bars = 0;
+
+    //for center indication: draw either the port half or the stbd half of the stack
+    stack_val = stack_val - 500;
+    STACK_HALF = STBD;
+
+    if (stack_val < 0)
+    {
+        STACK_HALF = PORT;
+        x_incr = -x_incr;
+        stack_val = -stack_val;
+    }
+
+    stack_temp = stack_val;    //keep stack_val intact for later.
+
+    //determine number of solid bars
+    if (stack_temp != 0)
+        while (stack_temp > 0)
+        {
+            stack_temp = stack_temp - (500 / number_bars);
+            solid_bars = solid_bars + 1;
+        }
+
+    else
+        solid_bars = 1;
+
+    //if we're on the starboard half of the steering stack and moving more port
+    //or if we're on the port half of the steering stack and moving more starboard...
+    if (((STACK_HALF == STBD) && (*ptr_direction == STBD)) ||
+        ((STACK_HALF == PORT) && (*ptr_direction == PORT)))
+    {
+        if (solid_bars < bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val + HYSTERESIS_FACTOR;
+
+            if (stack_temp != 0)
+                while (stack_temp > 0)
+                {
+                    stack_temp = stack_temp - (500 / number_bars);
+                    solid_bars = solid_bars + 1;
+                }
+
+            else
+                solid_bars = 1;
+        }
+    }
+
+    //clamp
+    if (solid_bars > number_bars)
+        solid_bars = number_bars;
+
+    //if we're on the port half of the steering stack and moving more port
+    //or if we're on the starboard half of the steering stack and moving more starboard...
+    if (((STACK_HALF == PORT) && (*ptr_direction == STBD)) ||
+        ((STACK_HALF == STBD) && (*ptr_direction == PORT)))
+    {
+        if (solid_bars > bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val - HYSTERESIS_FACTOR;
+
+            if (stack_temp != 0)
+                while (stack_temp > 0)
+                {
+                    stack_temp = stack_temp - (500 / number_bars);
+                    solid_bars = solid_bars + 1;
+                }
+
+            else
+                solid_bars = 1;
+        }
+    }
+
+    //Change the direction of movement if necessary
+    if (solid_bars < bars_previous)
+    {
+        if (STACK_HALF == STBD)
+            *ptr_direction = PORT;
+
+        if (STACK_HALF == PORT)
+            *ptr_direction = STBD;
+    }
+
+    if (solid_bars > bars_previous)
+    {
+        if (STACK_HALF == STBD)
+            *ptr_direction = STBD;
+
+        if (STACK_HALF == PORT)
+            *ptr_direction = PORT;
+    }
+
+  
+    //Clear stacks if the indication data stream is lost
+
+    if (((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == main_station) &&
+        (CCIM_Fault == 1) && (Serial_Fault == 1)) ||
+        ((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == wing_station) &&
+            (CCIM_Fault == 1) && (MS_CAN_Fault != 0)) ||
+        ((SettingsGetDataMode() == CANbus_mode) && (MS_CAN_Fault != 0)) || //wing station
+        ((SettingsGetDataMode() == rs232_mode) && (Serial_Fault == 1)) || //main station
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 4) && (PNoz_sigFault > STATE1)) ||
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 5) && (SNoz_sigFault > STATE1)))
+
+    {
+       
+        for (indexI = 0; indexI < number_bars; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size), (y_pos + y_size + y_size_off[indexI]), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            x_pos = x_pos + x_incr;  //horizontal stack
+        }
+
+        x_pos = x_start;
+        x_incr = -x_incr;
+
+        for (indexI = 0; indexI < number_bars; indexI = indexI + 1)
+        {
+             blockclearEx(x_pos, y_pos, (x_pos + x_size), (y_pos + y_size + y_size_off[indexI]), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+
+            x_pos = x_pos + x_incr;  //horizontal stack
+        }
+    }
+
+    else //no sensor fault...
+    {
+        //draw solid bars............................................
+        
+        for (indexI = 0; indexI < solid_bars; indexI = indexI + 1)
+        {
+           
+
+            blockfillEx(
+                (x_pos + x_size), 
+                (y_pos + y_size + y_size_off[indexI]),
+                x_pos, 
+                y_pos, 
+                BLACK,
+                100,
+                LAYER_FRONT);
+
+            x_pos = x_pos + x_incr;  //horizontal stack
+        }
+
+        //draw empty bars............................................
+        for (indexI = indexI; indexI < number_bars; indexI = indexI + 1)
+        {
+          blockclearEx(x_pos, y_pos, (x_pos + x_size), (y_pos + y_size + y_size_off[indexI]), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            x_pos = x_pos + x_incr;  //horizontal stack
+        }
+
+        //clear the non-used (left or right) half of the indication stack
+        //accounts for any bars not cleared during quick movements
+        x_incr = -x_incr;
+        x_pos = x_start + x_incr;
+        y_pos = y_start;
+
+        for (indexI = 1; indexI < number_bars; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size), (y_pos + y_size + y_size_off[indexI]), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            x_pos = x_pos + x_incr;  //horizontal stack
+        }
+    }
+
+    return(solid_bars);
+}
+
+
+//---------------------------------------------------------------------------------------------
+//Indicator Processing for Bucket Angle--------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+int DrawBucketStack(int stack_num, int stack_val, int x_start, int y_start,
+    int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction)
+{
+
+    //initialize variable values
+    x_pos = x_start;
+    y_pos = y_start;
+    solid_bars = 0;
+
+    if (stack_num == 1) //port bucket
+        for (indexI = 0; indexI < 20; indexI = indexI + 1)
+            x_size_off[indexI] = -x_size_off[indexI];
+
+    //for center indication: draw either the DOWN half or the UP half of the stack
+    stack_val = stack_val - 500;
+    STACK_HALF = UP;
+
+    if (stack_val < 0)
+    {
+        STACK_HALF = DOWN;
+        y_incr = -y_incr;
+        stack_val = -stack_val;
+    }
+
+    stack_temp = stack_val;    //keep stack_val intact for later.
+
+    //determine number of solid bars
+    if (stack_temp != 0)
+        while (stack_temp > 0)
+        {
+            stack_temp = stack_temp - (500 / NUMBER_BARS);
+            solid_bars = solid_bars + 1;
+        }
+
+    else
+        solid_bars = 1;
+
+    //if we're on the starboard half of the steering stack and moving more DOWN
+    //or if we're on the DOWN half of the steering stack and moving more starboard...
+    if (((STACK_HALF == UP) && (*ptr_direction == UP)) ||
+        ((STACK_HALF == DOWN) && (*ptr_direction == DOWN)))
+    {
+        if (solid_bars < bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val + HYSTERESIS_FACTOR;
+
+            if (stack_temp != 0)
+                while (stack_temp > 0)
+                {
+                    stack_temp = stack_temp - (500 / NUMBER_BARS);
+                    solid_bars = solid_bars + 1;
+                }
+
+            else
+                solid_bars = 1;
+        }
+    }
+
+    //if we're on the DOWN half of the steering stack and moving more DOWN
+    //or if we're on the starboard half of the steering stack and moving more starboard...
+    if (((STACK_HALF == DOWN) && (*ptr_direction == UP)) ||
+        ((STACK_HALF == UP) && (*ptr_direction == DOWN)))
+    {
+        if (solid_bars > bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val - HYSTERESIS_FACTOR;
+
+            if (stack_temp != 0)
+                while (stack_temp > 0)
+                {
+                    stack_temp = stack_temp - (500 / NUMBER_BARS);
+                    solid_bars = solid_bars + 1;
+                }
+
+            else
+                solid_bars = 1;
+        }
+    }
+
+    //Change the direction of movement if necessary
+    if (solid_bars < bars_previous)
+    {
+        if (STACK_HALF == UP)
+            *ptr_direction = DOWN;
+
+        if (STACK_HALF == DOWN)
+            *ptr_direction = UP;
+    }
+
+    if (solid_bars > bars_previous)
+    {
+        if (STACK_HALF == UP)
+            *ptr_direction = UP;
+
+        if (STACK_HALF == DOWN)
+            *ptr_direction = DOWN;
+    }
+
+    //Clear stacks if the indication data stream is lost
+
+
+    if (((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == main_station) &&
+        (CCIM_Fault == 1) && (Serial_Fault == 1)) ||
+        ((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == wing_station) &&
+            (CCIM_Fault == 1) && (MS_CAN_Fault != 0)) ||
+        ((SettingsGetDataMode() == CANbus_mode) && (MS_CAN_Fault != 0)) || //wing station
+        ((SettingsGetDataMode() == rs232_mode) && (Serial_Fault == 1)) || //main station
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 4) && (PNoz_sigFault > STATE1)) ||
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 5) && (SNoz_sigFault > STATE1)))
+
+    {
+
+        for (indexI = 0; indexI < NUMBER_BARS; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off[indexI]), (y_pos + y_size), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+
+        y_pos = y_start;
+        y_incr = -y_incr;
+
+        for (indexI = 0; indexI < NUMBER_BARS; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off[indexI]), (y_pos + y_size), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+
+    }
+
+    else //no sensor fault...
+    {
+        //draw solid bars............................................
+        for (indexI = 0; indexI < solid_bars; indexI = indexI + 1)
+        {
+            blockfillEx(x_pos, y_pos, (x_pos + x_size + x_size_off[indexI]), (y_pos + y_size),BLACK, 100, LAYER_FRONT);
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+
+        //draw empty bars............................................
+        for (indexI = indexI; indexI < NUMBER_BARS; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off[indexI]), (y_pos + y_size),MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+
+        //clear the non-used (upper or lower) half of the indication stack
+        //accounts for any bars not cleared during quick movements
+        y_incr = -y_incr;
+        x_pos = x_start;
+        y_pos = y_start + y_incr;
+
+        for (indexI = 1; indexI < NUMBER_BARS; indexI = indexI + 1)
+        {
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off[indexI]), (y_pos + y_size), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+    }
+
+    if (stack_num == 1) //port bucket
+        for (indexI = 0; indexI < 20; indexI = indexI + 1)
+            x_size_off[indexI] = -x_size_off[indexI];
+
+    return(solid_bars);
+}
+
+
+
+//---------------------------------------------------------------------------------------------
+//Indicator Processing for Tabs ---------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+int DrawTabStack(int stack_num, int stack_val, int x_start, int y_start,
+    int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction)
+{
+    //int direction;
+    //initialize variable values
+    x_pos = x_start;
+    y_pos = y_start;
+    solid_bars = 0;
+
+    //add offset to make each bar's threshold in the middle of that bar's range
+    stack_val = stack_val + 500 / (NUMBER_BARS * 2 - 1);
+
+    if (stack_val > 999)
+        stack_val = 999;
+
+    stack_temp = stack_val;
+
+    if (stack_num == 3) //bar directions reversed for stbd tab
+        for (indexI = 0; indexI < 20; indexI = indexI + 1)
+            x_size_off_tabs[indexI] = -x_size_off_tabs[indexI];
+
+    //determine number of bars to draw
+    if (stack_temp < (1000 / (NUMBER_BARS * 2 - 1)))
+        solid_bars = 1;
+
+    else
+        while (stack_temp >= (NUMBER_BARS * 2 - 1))
+        {
+            stack_temp = stack_temp - (1000 / (NUMBER_BARS * 2 - 1));
+            solid_bars = solid_bars + 1;
+        }
+
+    //introduce hysteresis to prevent flickering near the each bar's threshold
+    if (*ptr_direction == DOWN)
+    {
+        if (solid_bars > bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val - HYSTERESIS_FACTOR; //increase threshold
+
+            if (stack_temp < (1000 / (NUMBER_BARS * 2 - 1))) //recalculate number of bars
+                solid_bars = 1;
+
+            else
+            {
+                while (stack_temp >= (NUMBER_BARS * 2 - 1))
+                {
+                    stack_temp = stack_temp - (1000 / (NUMBER_BARS * 2 - 1));
+                    solid_bars = solid_bars + 1;
+                }
+            }
+        }
+    }
+
+    if (*ptr_direction == UP)
+    {
+        if (solid_bars < bars_previous)
+        {
+            solid_bars = 0;
+            stack_temp = stack_val + HYSTERESIS_FACTOR; //decrease threshold
+
+            if (stack_temp < (1000 / (NUMBER_BARS * 2 - 1))) //recalculate number of bars
+                solid_bars = 1;
+
+            else
+            {
+                while (stack_temp >= (NUMBER_BARS * 2 - 1))
+                {
+                    stack_temp = stack_temp - (1000 / (NUMBER_BARS * 2 - 1));
+                    solid_bars = solid_bars + 1;
+                }
+            }
+        }
+    }
+
+    //Change (or reinforce) the direction of movement if ecessary
+    if (solid_bars < bars_previous)
+        *ptr_direction = DOWN;
+
+    if (solid_bars > bars_previous)
+        *ptr_direction = UP;
+
+    //if (solid_bars == bars previous), keep the same direction (we don't really care).
+
+    stack_temp = (NUMBER_BARS * 2) - solid_bars; //swap up and down...hi counts means tabs/drives are up!
+
+ 
+    if (((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == main_station) &&
+        (CCIM_Fault == 1) && (Serial_Fault == 1)) ||
+        ((SettingsGetDataMode() == CANbus_GPSI_mode) && (SettingsGetStationType() == wing_station) &&
+            (CCIM_Fault == 1) && (MS_CAN_Fault != 0)) ||
+        ((SettingsGetDataMode() == CANbus_mode) && (MS_CAN_Fault != 0)) || //wing station
+        ((SettingsGetDataMode() == rs232_mode) && (Serial_Fault == 1)) || //main station
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 4) && (PNoz_sigFault > STATE1)) ||
+        ((SettingsGetDataMode() == rs232_mode) && (stack_num == 5) && (SNoz_sigFault > STATE1)))
+
+    {
+        for (indexI = 0; indexI < (NUMBER_BARS * 2 - 1); indexI = indexI + 1)
+        {
+           // _blockclear(x_pos, y_pos, (x_pos + x_size + x_size_off_tabs[indexI]), (y_pos + y_size));
+
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off_tabs[indexI]), (y_pos + y_size), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+    }
+
+    else
+    {
+        //draw solid bars............................................
+        for (indexI = 0; indexI < stack_temp; indexI = indexI + 1)
+        {
+            //_blockfill(x_pos, y_pos, (x_pos + x_size + x_size_off_tabs[indexI]), (y_pos + y_size));
+
+            blockfillEx(
+				(x_pos + x_size + x_size_off_tabs[indexI]),
+				(y_pos + y_size),
+				x_pos,
+				y_pos,
+				BLACK,
+				100,
+				LAYER_FRONT);
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+
+        //draw empty bars............................................
+        for (indexI = indexI; indexI < (NUMBER_BARS * 2 - 1); indexI = indexI + 1)
+        {
+          //  _blockclear(x_pos, y_pos, (x_pos + x_size + x_size_off_tabs[indexI]), (y_pos + y_size));
+
+            blockclearEx(x_pos, y_pos, (x_pos + x_size + x_size_off_tabs[indexI]), (y_pos + y_size), MAKERGB565(121, 137, 121), LAYER_FRONT);
+
+            y_pos = y_pos + y_incr;  //vertical stack
+        }
+    }
+
+
+
+    if (stack_num == 3)  //bar directions reversed for stbd tab
+        for (indexI = 0; indexI < 20; indexI = indexI + 1)
+            x_size_off_tabs[indexI] = -x_size_off_tabs[indexI];
+
+    return(solid_bars); //return number of bars drawn, for hysteresis calculation next time!
+}
+
+

@@ -99,9 +99,7 @@ void Scrn01FaultsUpdate(void)
     if (DataBase_Get(&dbElement, db_VECTOR_cal_fault_error, 0)) {
         cfemask = dbElement.Data.ui;
     }
-    if (DataBase_Get(&dbElement, db_VECTOR_GAL_fault_error, 0)) {
-        galmask = dbElement.Data.ui;
-    }
+    if (DataBase_Get(&dbElement, db_VECTOR_GAL_fault_error, 0)) {galmask = dbElement.Data.ui;}
 
     // -- NEWLY ADDED: detect newly activated bits, so we can un-ack them
     _CheckNewlyActivatedBits(sta1mask, &s_prevSta1Mask, STA1);

@@ -52,6 +52,18 @@
 
 #define NUMBER_OF_CENTRAL_ALARMS  17
 
+
+#define NUMBER_BARS 10
+#define DOWN 0
+#define UP 1
+#define PORT 0
+#define STBD 1
+#define HYSTERESIS_FACTOR 30  //note: to implement the hysteresis, the thresholds for drawing each
+//bar remain constant, but we add an offset to the driving value when the
+//current (calculated) number of bars is less than the previous number of bars
+//7 = about 1.5% hysteresis (7 counts in each direction, scale of 1000)
+
+
 extern int Intsteer_Enable;
 //Enable_RS232_Transmission is set from reading the i15 from serial received line . if it is 1 , Enable_RS232_Transmission = 0; if it is 0, Enable_RS232_Transmission = 1 that s if we are the main statoin
 extern int Enable_RS232_Transmission;
@@ -92,6 +104,8 @@ void SetDebugMessage(const char* format, ...);
 
 void AddDebugMessage(const char* format, ...);
 const char* GetDebugLogMessage(int index);
+// indication display enum; these identify the individual bar graph displays.
+enum { PORT_TRIMTAB, PORT_BUCKET, STBD_BUCKET, STBD_TRIMTAB, PORT_NOZZLE, STBD_NOZZLE };
 
 typedef enum
 {
@@ -143,6 +157,13 @@ extern int RS232_XMIT_COUNTER;
 //allows wing stations to read the rs232->can data instead of the CCIM can data.
 extern int PORTNOZ_rs232counter, STBDNOZ_rs232counter, PORTBKT_rs232counter, STBDBKT_rs232counter;
 extern int PORTTAB_rs232counter, STBDTAB_rs232counter;
+
+
+// indication display variables for applying hysteresis to display bar graphs (stacks)
+extern int bars_prev_PORT_BUCKET, bars_prev_PORT_NOZZLE, bars_prev_PORT_TAB;
+extern int bars_prev_STBD_BUCKET, bars_prev_STBD_NOZZLE, bars_prev_STBD_TAB;
+extern int PB_dir, PN_dir, SA_dir, PT_dir, SB_dir, SN_dir, ST_dir;
+extern int STACK_HALF, stack_temp;
 
 //for calibration
 extern int uiRaw_PB, uiRaw_SB, uiRaw_PN, uiRaw_SN, uiRaw_PT, uiRaw_ST;
@@ -200,6 +221,27 @@ enum AutoCal_Command {
     ABORT = 33,
     FINISH = 22,
 };
+
+extern int indexI, stack_value, x_pos, y_pos, solid_bars, empty_bars;
+
+// declare an exter in t array named x_size_orr 
+extern int x_size_off[];
+extern int y_size_off[];
+extern int x_size_off_tabs[];
+extern int B1_xpos, B2_xpos, N1_xpos, N2_xpos, T1_xpos, T2_xpos;
+extern int N1_xincr, N2_xincr, N1_xsize, N2_xsize, DoubleBarFlag;
+extern int B1_present, B2_present, N1_present, N2_present, T1_present, T2_present;
+
+//Bar-graph (stack) indication display
+void VECTOR_stack_update(int stack_number);
+int DrawBucketStack(int stack_num, int stack_val, int x_start, int y_start,int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction);
+int DrawNozzleStack(int stack_num, int stack_val, int x_start, int y_start,int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction);
+int DrawTabStack(int stack_num, int stack_val, int x_start, int y_start, int x_incr, int y_incr, int x_size, int y_size, int bars_previous, int* ptr_direction);
+//void Set_X_Offset(void);
+//void Set_X_Offset_Tabs(void);
+//void Set_Y_Offset(void);
+
+
 #endif // __VCINC_H__
 
 

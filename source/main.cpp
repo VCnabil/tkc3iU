@@ -251,8 +251,8 @@ extern "C" void CANvuMainInit(void)
 	UARTInit();
 	MMIInit(100, 100, 30);
 	EventHandlerInit();
-	LightingInit();
 	DataBase_Init();
+	LightingInit();
 }
 
 extern "C" void CANvuMain(void)

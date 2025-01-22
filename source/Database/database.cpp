@@ -56,27 +56,33 @@ static DB_INFO_TABLE_T m_DBINFO[] =
 	{ DBUNITS_NONE, "Vector Stbd Bucket", db_VECTOR_stbd_bucket, { 0 }},
 	{ DBUNITS_NONE, "Vector Port Trimtab", db_VECTOR_port_trimtab, { 0 }},
 	{ DBUNITS_NONE, "Vector Stbd Trimtab", db_VECTOR_stbd_trimtab, { 0 }},
+
 	{ DBUNITS_NONE, "Vector Signal Fault Error", db_VECTOR_signal_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector NFU Fault Error", db_VECTOR_nfu_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector STA1 Fault Error", db_VECTOR_STA1_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector STA2 Fault Error", db_VECTOR_STA2_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector STA3 Fault Error", db_VECTOR_STA3_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector Cal Fault Error", db_VECTOR_cal_fault_error, { 0 }},
+
 	{ DBUNITS_NONE, "Vector Interlock Fault Error", db_VECTOR_interlock_fault_error, { 0 }},
 	{ DBUNITS_NONE, "Vector I14 INDICConfig", db_VECTOR_I14_INDICConfig, { 0 }},
 	{ DBUNITS_NONE, "Vector I15 doEnableRS232", db_VECTOR_I15_doEnableRS232, { 0 }},
 	{ DBUNITS_NONE, "Vector I16 autocalSTATUS", db_VECTOR_I16_autocalSTATUS, { 0 }},
-	{ DBUNITS_NONE, "Vector VCICAN Fault Error", db_VECTOR_VCICAN_fault_error, { 0 }},
-	{ DBUNITS_NONE, "Vector VCIstatus", db_VECTOR_VCIstatus, { 0 }},
+	{ DBUNITS_NONE, "Vector i17 VCICAN Fault Error", db_VECTOR_I17_VCICAN_fault_error, { 0 }},
+	{ DBUNITS_NONE, "Vector i18 VCIstatus", db_VECTOR_I18_VCIstatus, { 0 }},
 
-	 
-	//PARAMETERS FOR CCIM DATA
+	{ DBUNITS_NONE, "Vector i19 GAL Fault Error ", db_VECTOR_GAL_fault_error, { 0 }},
+
+	////PARAMETERS FOR CCIM DATA
 	{ DBUNITS_NONE, "Vector CCIM AIN1", db_VECTOR_CCIM_AIN1, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN2", db_VECTOR_CCIM_AIN2, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN3", db_VECTOR_CCIM_AIN3, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN4", db_VECTOR_CCIM_AIN4, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN5", db_VECTOR_CCIM_AIN5, { 0 }},
 	{ DBUNITS_NONE, "Vector CCIM AIN6", db_VECTOR_CCIM_AIN6, { 0 }},
+	// This must always be the last entry
+	//{ DBUNITS_NONE, "Test", db_TEST, { 0 }},
+ 
 
 };
 
@@ -486,25 +492,30 @@ static void _Database_InitValues(void)
 			m_DBElements[db_VECTOR_port_bucket][0].Data.ui = 33;
 			m_DBElements[db_VECTOR_stbd_bucket][0].Data.ui = 44;
 			m_DBElements[db_VECTOR_port_trimtab][0].Data.ui = 55;
-			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.ui = 66;
+			m_DBElements[db_VECTOR_stbd_trimtab][0].Data.ui = 66
+				;
 			m_DBElements[db_VECTOR_signal_fault_error][0].Data.ui = 77;
 			m_DBElements[db_VECTOR_nfu_fault_error][0].Data.ui = 88;
 			m_DBElements[db_VECTOR_STA1_fault_error][0].Data.ui = 99;
 			m_DBElements[db_VECTOR_STA2_fault_error][0].Data.ui = 100;
 			m_DBElements[db_VECTOR_STA3_fault_error][0].Data.ui = 101;
 			m_DBElements[db_VECTOR_cal_fault_error][0].Data.ui = 102;
+		
 			m_DBElements[db_VECTOR_interlock_fault_error][0].Data.ui = 103;
 			m_DBElements[db_VECTOR_I14_INDICConfig][0].Data.ui = 104;
 			m_DBElements[db_VECTOR_I15_doEnableRS232][0].Data.ui = 105;
 			m_DBElements[db_VECTOR_I16_autocalSTATUS][0].Data.ui = 106;
-			m_DBElements[db_VECTOR_VCICAN_fault_error][0].Data.ui = 107;
-			m_DBElements[db_VECTOR_VCIstatus][0].Data.ui = 108;
-			m_DBElements[db_VECTOR_CCIM_AIN1][0].Data.ui = 109;
+			m_DBElements[db_VECTOR_I17_VCICAN_fault_error][0].Data.ui = 107;
+			m_DBElements[db_VECTOR_I18_VCIstatus][0].Data.ui = 108;
+			
+		 	m_DBElements[db_VECTOR_GAL_fault_error][0].Data.ui = 109;
+			m_DBElements[db_VECTOR_CCIM_AIN1][0].Data.ui = 0;
 			m_DBElements[db_VECTOR_CCIM_AIN2][0].Data.ui = 110;
 			m_DBElements[db_VECTOR_CCIM_AIN3][0].Data.ui = 111;
 			m_DBElements[db_VECTOR_CCIM_AIN4][0].Data.ui = 112;
 			m_DBElements[db_VECTOR_CCIM_AIN5][0].Data.ui = 113;
 			m_DBElements[db_VECTOR_CCIM_AIN6][0].Data.ui = 114;
+
 
 
 		}
@@ -515,8 +526,10 @@ static void _DataBase_ValidateDBINFO(void)
 {
 	uint32_t DBIndex = 0;
 	uint32_t DBINFO_Size = 0;
-	DBINFO_Size = sizeof(m_DBINFO) / sizeof(DB_INFO_TABLE_T);
-	if (DBINFO_Size != DATABASEINDEX_MAX)
+	uint32_t m_DBINFO_Size = sizeof(m_DBINFO); //0x0000076c
+	uint32_t DB_INFO_TABLE_T_Size = sizeof(DB_INFO_TABLE_T);//0x0000004c
+	DBINFO_Size = m_DBINFO_Size / DB_INFO_TABLE_T_Size; //0x00000019
+	if (DBINFO_Size != DATABASEINDEX_MAX)  //<fails here 
 	{
 		assert(FALSE);
 	}

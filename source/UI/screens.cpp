@@ -44,7 +44,8 @@ void ScreensInit(void)
     MMIRegisterScreen(SCREENID_SCRN02INDICATONS, Scrn02IndicatonsEnter, Scrn02IndicatonsCreate, Scrn02IndicatonsUpdate, Scrn02IndicatonsExit);
 	
 	// Initial screen.
-MMIScreenGoto(SCREENID_START);
+	MMIScreenGoto(SCREENID_TEST2);
+//MMIScreenGoto(SCREENID_START);
 	//MMIScreenGoto(SCREENID_START);
 
 #if defined(ENABLE_FPS_COUNTER)

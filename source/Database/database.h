@@ -51,39 +51,46 @@ typedef enum
 	db_VECTOR_stbd_bucket,
 	db_VECTOR_port_trimtab,
 	db_VECTOR_stbd_trimtab,
-	//senssors i7
-	db_VECTOR_signal_fault_error,
-	//nfu i8
-	db_VECTOR_nfu_fault_error,
-	//sta1 i9
-	db_VECTOR_STA1_fault_error,
-	//sta2 i10
-	db_VECTOR_STA2_fault_error,
-	//sta3 i11
-	db_VECTOR_STA3_fault_error,
-	//autocal faults and trimtab faults i12
-	db_VECTOR_cal_fault_error,
-	//interlock faults i13
-	db_VECTOR_interlock_fault_error,
-	//Ondication Configuration i14
-	db_VECTOR_I14_INDICConfig,
-	//vcican Enable RS232 i15
-	db_VECTOR_I15_doEnableRS232,
-	// autocalSTATUS i16
-	db_VECTOR_I16_autocalSTATUS,
-	//vcican faults i17
-	db_VECTOR_VCICAN_fault_error,
-	// VCIstatus i18
-	db_VECTOR_VCIstatus,
- 	// gENERALaLARM i19
-	db_VECTOR_GAL_fault_error, 
-	//PARAMETERS FOR CCIM DATA
+
+	db_VECTOR_signal_fault_error,	//senssors i7
+
+	db_VECTOR_nfu_fault_error,	//nfu i8
+
+	db_VECTOR_STA1_fault_error,	//sta1 i9
+
+	db_VECTOR_STA2_fault_error,	//sta2 i10
+
+	db_VECTOR_STA3_fault_error,	//sta3 i11
+
+	db_VECTOR_cal_fault_error,	//autocal faults and trimtab faults i12
+
+
+
+
+	db_VECTOR_interlock_fault_error,	//interlock faults i13
+
+	db_VECTOR_I14_INDICConfig,	//Ondication Configuration i14
+
+	db_VECTOR_I15_doEnableRS232,	//vcican Enable RS232 i15
+
+	db_VECTOR_I16_autocalSTATUS,	// autocalSTATUS i16
+
+
+	db_VECTOR_I17_VCICAN_fault_error,	//vcican faults i17
+
+	db_VECTOR_I18_VCIstatus,	// VCIstatus i18
+
+
+
+	db_VECTOR_GAL_fault_error,  	// gENERALaLARM i19
+//	//PARAMETERS FOR CCIM DATA
 	db_VECTOR_CCIM_AIN1,
 	db_VECTOR_CCIM_AIN2,
 	db_VECTOR_CCIM_AIN3,
 	db_VECTOR_CCIM_AIN4,
 	db_VECTOR_CCIM_AIN5,
 	db_VECTOR_CCIM_AIN6,
+	//db_TEST,
 	//////////////////////////////////////////////////////////////////////////
 	// This must always be the last entry
 	DATABASEINDEX_MAX,
