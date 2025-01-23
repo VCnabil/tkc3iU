@@ -23,17 +23,34 @@ static void _Key5Release(void* userData);
 // LOCAL VARIABLES
 //------------------------------------------------------------------------------
 static int TestValue = 0;
-static int StepSize = 1;
+static int StepSize = 50;
 static const std::array<int, 5> StepSizes = { 1, 5, 50, 100, 200 };
-static size_t CurrentStepIndex = 0;
+static size_t CurrentStepIndex = 2;
+void InitializeScreenobjects();
 
-BGage_DirectionVector G0;
+BGage_DirectionVector G_full;
+BGage_DirectionVector G_half_left;
+BGage_DirectionVector G_half_right;
 
+BGage_DirectionVector G_quarter_FarLeft;
+BGage_DirectionVector G_quarter_Left;
+BGage_DirectionVector G_quarter_Right;
+BGage_DirectionVector G_quarter_FarRight;
 //------------------------------------------------------------------------------
 // PUBLIC FUNCTIONS
 //------------------------------------------------------------------------------
- 
+void Scrn00Test2Create(void)
+{
 
+    G_full = BGage_DirectionVector("Nozzle1", 0, 50, false, 1);
+    G_half_left = BGage_DirectionVector("Nozz L", 0, 104, true, 2);
+    G_half_right = BGage_DirectionVector("Nozz R", lcd_get_width() / 2, 104, false, 2);
+    G_quarter_FarLeft = BGage_DirectionVector("Nozz FL", (lcd_get_width() / 4) * 0, 158, true, 4);
+    G_quarter_Left = BGage_DirectionVector("Nozz L", (lcd_get_width() / 4) * 1, 158, false, 4);
+    G_quarter_Right = BGage_DirectionVector("Nozz R", (lcd_get_width() / 4) * 2, 158, false, 4);
+    G_quarter_FarRight = BGage_DirectionVector("Nozz FR", (lcd_get_width() / 4) * 3, 158, true, 4);
+    InitializeScreenobjects();
+}
 
 void Scrn00Test2Update(void)
 {
@@ -43,15 +60,16 @@ void Scrn00Test2Update(void)
     std::string str = "Val: " + std::to_string(TestValue) + "    StepSize: " + std::to_string(StepSize);
     SimpleTextDraw(lcd_get_width() / 2, 20, str.c_str(), BLACK, 100, LAYER_FRONT);
 
-   // vlineEx(158, 120  , 100, NORMAL, SOLID, BLACK, 100, LAYER_FRONT);
+ 
 
-  //  drawrectangle(TestValue, 120, 10, 10,  BLACK,   LAYER_FRONT);
 
-  
-    G0 = BGage_DirectionVector("test", 0, 100);
-    float _percent = 0.0f;
-    _percent = (TestValue / 1000.0f) * 100.0f;
-    G0.drawPercent(_percent);
+    G_full.drawFancy2(TestValue);
+    G_half_left.draw(TestValue);
+    G_half_right.drawFancy(TestValue);
+    G_quarter_FarLeft.drawFancy2(TestValue);
+    G_quarter_Left.draw(TestValue);
+    G_quarter_Right.drawFancy(TestValue);
+    G_quarter_FarRight.drawFancy2(TestValue);
 } 
  
 
@@ -60,11 +78,10 @@ void Scrn00Test2Enter(void)
  
 }
 
-void Scrn00Test2Create(void)
-{
 
+void InitializeScreenobjects() {
 
-   vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
+    vLcdBlankerEx(MAKERGB565(121, 137, 121), ALPHA_COLOR);
     // Setup buttons and their callbacks
     ButtonBarSetHeight(48);
     //btn1
@@ -96,15 +113,13 @@ void Scrn00Test2Create(void)
     SimpleTextSetupFontEx(FONT_INDEX_TTMAIN, 20, HORIZONTAL_ALIGNMENT_CENTRE, VERTICAL_ALIGNMENT_TOP, 0);
 
     std::string strTitle = "Test Graphs";
-    int _dimW =lcd_get_width();
+    int _dimW = lcd_get_width();
     int _dimH = lcd_get_height();
 
     //concat title w: h:
     std::string str = strTitle + " w: " + std::to_string(_dimW) + " h: " + std::to_string(_dimH);
     SimpleTextDraw(lcd_get_width() / 2, 0, str.c_str(), BLACK, 100, LAYER_BACK);
 }
-
-
 
 void Scrn00Test2Exit(void)
 {

@@ -10,15 +10,19 @@ private:
     int32_t x_loc;              // X-coordinate of the gauge's location
     int32_t y_loc;              // Y-coordinate of the gauge's location
     std::string name;           // Name or label of the gauge
+    bool _isflipped = false;    // Flag to indicate if the gauge is flipped
+    int _ratio=1;
 
 public:
     // Constructors
-    BGage_DirectionVector( const std::string& name, int32_t x_pos, int32_t y_pos);
+    BGage_DirectionVector( const std::string& name, int32_t x_pos, int32_t y_pos, bool isflipped = false , int _ratio=1);
     BGage_DirectionVector();
 
     // Draw method to visualize the gauge
     void draw(int argVal) const;
-    void drawPercent(float argpercent) const;
+    void drawFancy(int argVal) const;
+    void drawFancy2(int argVal) const;
+   
 };
 
 #endif // BARGAUGE_H
