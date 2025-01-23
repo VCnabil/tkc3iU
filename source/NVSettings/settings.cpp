@@ -688,26 +688,26 @@ static void _SettingsLoadDefaults(void)
     // or  = comm_mode_5;
 
     // Xmit RS232
-    m_settings.XMIT_RS232 = 1; // 1 = transmit RS232, 0 = don't transmit RS232
+    m_settings.XMIT_RS232 = (uint8_t)1; // 1 = transmit RS232, 0 = don't transmit RS232
 
     // INSTEER
-    m_settings.INTSTEER = 1; // 1 = ON, 0 = OFF
+    m_settings.INTSTEER = (uint8_t)1; // 1 = ON, 0 = OFF
 
 
-	m_settings.PN_MAX = 1000;
-	m_settings.PN_MIN = 0;
-	m_settings.SN_MAX = 1000;
-	m_settings.SN_MIN = 0;
-	m_settings.PB_MAX = 1000;
-	m_settings.PB_MIN = 0;
-	m_settings.SB_MAX = 1000;
-	m_settings.SB_MIN = 0;
-	m_settings.PT_MAX = 1000;
-	m_settings.PT_MIN = 0;
-	m_settings.ST_MAX = 1000;
-	m_settings.ST_MIN = 0;
-	m_settings.PB_NEUTRAL_THRUST = 500;
-	m_settings.SB_NEUTRAL_THRUST = 500;
+	m_settings.PN_MAX = (uint8_t)1000;
+	m_settings.PN_MIN = (uint8_t)0;
+	m_settings.SN_MAX = (uint8_t)1000;
+	m_settings.SN_MIN = (uint8_t)0;
+	m_settings.PB_MAX = (uint8_t)1000;
+	m_settings.PB_MIN = (uint8_t)0;
+	m_settings.SB_MAX = (uint8_t)1000;
+	m_settings.SB_MIN = (uint8_t)0;
+	m_settings.PT_MAX = (uint8_t)1000;
+	m_settings.PT_MIN = (uint8_t)0;
+	m_settings.ST_MAX = (uint8_t)1000;
+	m_settings.ST_MIN = (uint8_t)0;
+	m_settings.PB_NEUTRAL_THRUST = (uint8_t)500;
+	m_settings.SB_NEUTRAL_THRUST = (uint8_t)500;
   
 }
  

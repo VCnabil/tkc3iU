@@ -19,6 +19,8 @@ static void _Key4Release(void* userData);
 static void _Key5Release(void* userData);
  
 
+
+
 //------------------------------------------------------------------------------
 // PUBLIC FUNCTIONS
 //------------------------------------------------------------------------------
@@ -75,6 +77,7 @@ void Scrn00TestCreate(void)
     ButtonBarSetKeyText(KEYINDEX_1, FONT_INDEX_TTMAIN, 9, BLACK, "to", "start");
     ButtonBarSetKeyText(KEYINDEX_2, FONT_INDEX_TTMAIN, 9, BLACK, "prev", "10");
     ButtonBarSetKeyText(KEYINDEX_3, FONT_INDEX_TTMAIN, 9, BLACK, "next", "10");
+
     ButtonBarSetKeyText(KEYINDEX_5, FONT_INDEX_TTMAIN, 9, BLACK, "to", "test2");
     ButtonBarSetMode(BUTTONBARMODE_VISIBLE_ALWAYS);
 

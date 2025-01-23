@@ -38,6 +38,7 @@
 #include "UI/graphs.h"
 #include "UI/IndicatorUI/GHorizontal.h"
 #include "UI/IndicatorUI/GVertical.h"
+#include "UI/IndicatorUI/BarGauge.h"
 //screens
 
 #include "UI/Screens/scrn00debugCAN.h"

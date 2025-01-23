@@ -14,6 +14,36 @@ typedef struct
 } bar_T;
 extern const bar_T bar;
 
+// Bitmap File: bitmaps/BarBit.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[298662];
+} BarBitmap_T;
+extern const BarBitmap_T BarBitmap;
+
+// Bitmap File: bitmaps/BarBit340x240.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[76800];
+} BarBitmapFullScreen_T;
+extern const BarBitmapFullScreen_T BarBitmapFullScreen;
+
+// Bitmap File: bitmaps/BarBit100x100.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[10000];
+} BarBitmap100_T;
+extern const BarBitmap100_T BarBitmap100;
+
 // Bitmap File: bitmaps/red_square.png
 typedef struct
 {
@@ -54,6 +84,16 @@ typedef struct
 } up_s_T;
 extern const up_s_T up_s;
 
+// Bitmap File: bitmaps/png_up_s.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[3072];
+} png_up_s_T;
+extern const png_up_s_T png_up_s;
+
 // Bitmap File: bitmaps/down.png
 typedef struct
 {
@@ -73,6 +113,26 @@ typedef struct
     unsigned short bitmap[3072];
 } down_s_T;
 extern const down_s_T down_s;
+
+// Bitmap File: bitmaps/png_down_s.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[3072];
+} png_down_s_T;
+extern const png_down_s_T png_down_s;
+
+// Bitmap File: bitmaps/png_BtnBorder_1.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[3072];
+} png_BtnBorder_1_T;
+extern const png_BtnBorder_1_T png_BtnBorder_1;
 
 // Bitmap File: bitmaps/left.png
 typedef struct
@@ -323,6 +383,16 @@ typedef struct
     unsigned short bitmap[3072];
 } toggle_T;
 extern const toggle_T toggle;
+
+// Bitmap File: bitmaps/png_toggle.png
+typedef struct
+{
+    unsigned char nb_layer;
+    unsigned int x;
+    unsigned int y;
+    unsigned short bitmap[3072];
+} png_toggle_T;
+extern const png_toggle_T png_toggle;
 
 // Bitmap File: bitmaps/thrust_calib.png
 typedef struct
