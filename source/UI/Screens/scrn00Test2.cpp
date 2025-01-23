@@ -43,11 +43,11 @@ void Scrn00Test2Create(void)
 {
 
     G_full = BGage_DirectionVector("Nozzle1", 0, 50, false, 1);
-    G_half_left = BGage_DirectionVector("Nozz L", 0, 104, true, 2);
-    G_half_right = BGage_DirectionVector("Nozz R", lcd_get_width() / 2, 104, false, 2);
-    G_quarter_FarLeft = BGage_DirectionVector("Nozz FL", (lcd_get_width() / 4) * 0, 158, true, 4);
-    G_quarter_Left = BGage_DirectionVector("Nozz L", (lcd_get_width() / 4) * 1, 158, false, 4);
-    G_quarter_Right = BGage_DirectionVector("Nozz R", (lcd_get_width() / 4) * 2, 158, false, 4);
+    G_half_left = BGage_DirectionVector("Nozz L", 0, 104, true, 2, true);
+    G_half_right = BGage_DirectionVector("Nozz R", lcd_get_width() / 2, 104, false, 2, false);
+    G_quarter_FarLeft = BGage_DirectionVector("Nozz FL", (lcd_get_width() / 4) * 0, 158, true, 4, true);
+    G_quarter_Left = BGage_DirectionVector("Nozz L", (lcd_get_width() / 4) * 1, 158, false, 4, false);
+    G_quarter_Right = BGage_DirectionVector("Nozz R", (lcd_get_width() / 4) * 2, 158, false, 4, true);
     G_quarter_FarRight = BGage_DirectionVector("Nozz FR", (lcd_get_width() / 4) * 3, 158, true, 4);
     InitializeScreenobjects();
 }

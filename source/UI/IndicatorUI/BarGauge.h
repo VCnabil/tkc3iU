@@ -12,10 +12,12 @@ private:
     std::string name;           // Name or label of the gauge
     bool _isflipped = false;    // Flag to indicate if the gauge is flipped
     int _ratio=1;
+    bool _isMirrored = false;  // Flag to indicate if the gauge is mirrored
 
 public:
     // Constructors
-    BGage_DirectionVector( const std::string& name, int32_t x_pos, int32_t y_pos, bool isflipped = false , int _ratio=1);
+    BGage_DirectionVector( const std::string& name, int32_t x_pos, int32_t y_pos, bool isflipped = false , int _ratio=1, bool isMirrorred = false);
+ 
     BGage_DirectionVector();
 
     // Draw method to visualize the gauge
